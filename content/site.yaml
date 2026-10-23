@@ -14,8 +14,9 @@ work:
     intersection of strategy, design and technology. I translate complex topics into intuitive
     experiences.
 
-# Cookieless Vercel Web Analytics. Each variant can switch it off with `analytics: false`.
-analytics: true
+# Cookieless Vercel Web Analytics. Turn on Web Analytics in the Vercel project first, then set
+# this to true. Each variant can switch it off with `analytics: false`.
+analytics: false
 agents:
   # Known AI crawlers get the Markdown version by default (besides Accept: text/markdown).
   userAgents:

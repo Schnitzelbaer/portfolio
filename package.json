@@ -20,7 +20,8 @@
     "build:private": "tsx scripts/build-private.ts",
     "preview": "tsx scripts/preview-server.ts",
     "password:hash": "tsx scripts/password-hash.ts",
-    "test:e2e": "SITE_DOMAIN=portfolio.localhost ROUTING_PRODUCTION=1 npm run build && playwright test"
+    "test:e2e": "SITE_DOMAIN=portfolio.localhost ROUTING_PRODUCTION=1 npm run build && playwright test",
+    "smoke": "tsx scripts/smoke.ts"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.4",
@@ -42,11 +43,13 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "^2.6.2",
     "@playwright/test": "1.63.0",
     "@types/mdast": "^4.0.4",
     "@types/node": "^26.6.5",
     "@types/unist": "^3.0.3",
+    "lighthouse": "^13.5.0",
     "mdast-util-mdx": "^3.0.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",

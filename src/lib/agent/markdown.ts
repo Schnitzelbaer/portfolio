@@ -156,6 +156,13 @@ function transform(nodes: RootContent[], ctx: MarkdownContext): RootContent[] {
         ctx,
       );
     }
+    if (node.type === "image" && !/^https?:/.test(node.url)) {
+      // Local image files are not published under their source path; describe them instead.
+      return [
+        text(node.alt ? `[Image: ${node.alt}]` : "[Image]"),
+        ...(node.title ? [text(" "), emphasis(node.title)] : []),
+      ];
+    }
     if (!isJsx(node)) return [node];
     const serializer = node.name ? serializers[node.name as BlockName] : undefined;
     if (!serializer) throw new Error(`No Markdown serializer for <${node.name ?? "fragment"}>`);

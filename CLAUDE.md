@@ -22,6 +22,8 @@ npm run import:notion -- <export.zip|folder|page.md> [--slug name] [--force]
 npm run variant:new -- <id> --company "Name" [--projects a,b] [--intro "…"]
 npm run password:hash  # LOCK_PASSWORD_HASH + LOCK_COOKIE_SECRET for .env and Vercel
 npm run showcases:fallbacks   # with the dev server running: static first frames of showcases
+npm run smoke -- <url> [--production] [--variant <url>]   # check a deployment, warm image cache
+npx lighthouse http://portfolio.localhost:4400/ --form-factor=mobile   # with npm run preview; CHROME_PATH=/opt/pw-browsers/chromium in cloud sessions
 ```
 
 Run `npm run check` and `npm test` before every commit, `npm run test:e2e` before every push that touches routing, auth or content handling.

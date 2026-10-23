@@ -92,15 +92,14 @@ const { title, cover, coverAlt, keyFacts, outcome, locked } = entry.data;
     padding: 1rem 0.25rem 0;
   }
   .card__title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: var(--text-md);
     font-weight: 600;
     letter-spacing: -0.01em;
   }
   .card__title :global(.card__lock) {
-    flex: none;
+    display: inline-block;
+    margin-left: 0.4em;
+    vertical-align: -0.1em;
     color: var(--text-muted);
   }
   .card__role {

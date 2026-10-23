@@ -47,7 +47,10 @@ for (const theme of themes) {
       await page.evaluate(() =>
         Promise.all([...document.images].map((img) => img.decode().catch(() => undefined))),
       );
-      const name = `${path === "/" ? "work" : path.slice(1).replaceAll("/", "-")}--${viewport.name}--${theme}.png`;
+      const url = new URL(path, base);
+      const prefix = url.hostname.split(".").length > 2 ? `${url.hostname.split(".")[0]}-` : "";
+      const slug = url.pathname === "/" ? "work" : url.pathname.slice(1).replaceAll("/", "-");
+      const name = `${prefix}${slug}--${viewport.name}--${theme}.png`;
       await page.screenshot({
         path: `screenshots/${name}`,
         fullPage: true,

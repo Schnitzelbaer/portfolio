@@ -44,3 +44,10 @@ Constraints from the brief:
 - Astro ignores page folders that start with `_`, so variant pages live under `/v/<id>/`. In production `/v/*` answers 404 on every host; variants are only reachable through their subdomain.
 - Vercel functions receive the original request URL, not the rewritten one. On-demand routes therefore sit at the public paths (`src/pages/work/[...gated].astro`) and read the variant from the Host header. A twin route under `/v/[variant]/work/` exists so Vercel's routing sends rewritten misses to the function.
 - Case studies with a `<Locked>` section render on demand (like locked case studies), so the unlocked section can be rendered on the server. This trades a function call for not shipping locked content in any form, encrypted or not.
+
+## Addendum (phases e to g)
+
+- On-demand pages reference images through Astro's `/_image` endpoint. The middleware gives those responses a one-year `s-maxage`, so Vercel's CDN keeps each variant; `npm run smoke` warms the cache after a deploy.
+- Password protection uses Web Crypto only (PBKDF2-SHA256 hash in ENV, HMAC-signed httpOnly cookie bound to the hash). Astro's built-in origin check protects the unlock form against CSRF.
+- `scripts/preview-server.ts` serves `.vercel/output` like Vercel: it applies the real `config.json` routes, serves static files and calls the real server function with the original URL. The e2e tests run against it.
+- Measured with Lighthouse (mobile, simulated throttling) against the preview server: Performance 99 to 100, Accessibility 100, Best Practices 100, LCP 1.7 to 1.9 s, CLS 0. Locked pages score 66 on SEO because they are `noindex` on purpose.

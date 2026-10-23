@@ -59,9 +59,9 @@ test("the For agents switch toggles between the regular and the agent version", 
   page,
 }) => {
   await page.goto("/work/transit-planner");
-  await page.getByRole("link", { name: "Agent-friendly version of this page" }).click();
+  await page.getByRole("link", { name: "For agents: agent-friendly version of this page" }).click();
   await expect(page).toHaveURL(/\/agent\/work\/transit-planner$/);
   await expect(page.locator(".agent__doc")).toContainText("# A journey planner");
-  await page.getByRole("link", { name: "Back to the regular version" }).click();
+  await page.getByRole("link", { name: "For agents: on. Back to the regular version" }).click();
   await expect(page).toHaveURL(/\/work\/transit-planner$/);
 });

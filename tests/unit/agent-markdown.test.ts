@@ -51,6 +51,11 @@ describe("Markdown serializers", () => {
     expect(md).not.toContain("Locked tour.");
   });
 
+  it("describes local Markdown images instead of exposing their paths", () => {
+    const md = mdxToMarkdown('![Planner](./images/planner.jpg "Live departures.")', ctx());
+    expect(md).toBe("[Image: Planner] _Live departures._");
+  });
+
   it("fails loudly for unknown components", () => {
     expect(() => mdxToMarkdown("<Mystery />", ctx())).toThrow(
       /No Markdown serializer for <Mystery>/,

@@ -25,10 +25,10 @@ const year = data.date.getFullYear();
 
 <article class="case">
   <header class="case__head column">
-    <p class="case__eyebrow reveal" style="--i: 0">
+    <div class="case__eyebrow reveal" style="--i: 0">
       <SectionLabel as="p">Case study</SectionLabel>
       <span class="mono">{year}</span>
-    </p>
+    </div>
     <h1 class="case__title reveal" style="--i: 1">
       {data.title}
       {data.locked && <Icon name="lock" size={18} class="case__lock" label="Password protected" />}
@@ -88,15 +88,14 @@ const year = data.date.getFullYear();
     gap: 0.875rem;
   }
   .case__title {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
     margin-top: 1rem;
     font-size: var(--text-xl);
     letter-spacing: -0.02em;
   }
-  :global(.case__lock) {
-    flex: none;
+  .case__title :global(.case__lock) {
+    display: inline-block;
+    margin-left: 0.4em;
+    vertical-align: -0.08em;
     color: var(--text-muted);
   }
   .case__lead {
@@ -135,11 +134,14 @@ const year = data.date.getFullYear();
     background: var(--surface-hover);
   }
   .next__title {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     color: var(--text);
     font-weight: 600;
+  }
+  .next__title :global(svg) {
+    display: inline-block;
+    margin-left: 0.4em;
+    vertical-align: -0.1em;
+    color: var(--text-muted);
   }
   :global(.next__arrow) {
     position: absolute;

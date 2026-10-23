@@ -28,7 +28,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
   );
   context.locals.unlocked = context.isPrerendered ? false : await isUnlocked(context.cookies);
 
-  if (!import.meta.env.DEV) return next();
+  if (!import.meta.env.DEV) {
+    const response = await next();
+    // On-demand pages reference images through Astro's /_image endpoint. Let Vercel's CDN keep
+    // each optimized variant, so only the first request after a deploy runs sharp.
+    if (context.url.pathname === "/_image" && response.ok) {
+      response.headers.set(
+        "Cache-Control",
+        "public, max-age=31536000, s-maxage=31536000, immutable",
+      );
+    }
+    return response;
+  }
 
   const path = context.url.pathname;
   if (path.startsWith(`${VARIANT_PREFIX}/`) || path.endsWith(".md")) return next();

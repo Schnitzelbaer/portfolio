@@ -18,7 +18,7 @@ const builtAt = new Date().toISOString();
   <div class="footer__start">
     {
       agentHref && (
-        <a class="switch mono" href={agentHref} data-on={agentActive ? "true" : "false"} aria-label={agentActive ? "Back to the regular version" : "Agent-friendly version of this page"}>
+        <a class="switch mono" href={agentHref} data-on={agentActive ? "true" : "false"} aria-label={agentActive ? "For agents: on. Back to the regular version" : "For agents: agent-friendly version of this page"}>
           <span>For agents</span>
           <span class="switch__track" aria-hidden="true">
             <span class="switch__thumb" />

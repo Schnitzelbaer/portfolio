@@ -33,6 +33,21 @@ const split = config.routes.findIndex((r) => r.handle === "filesystem");
 const beforeFs = config.routes.slice(0, split);
 const afterFs = config.routes.slice(split + 1).filter((r) => !r.handle);
 
+// The image endpoint fetches its source over HTTP from the request origin. Node cannot resolve
+// *.localhost, so point those requests at this server.
+const realFetch = globalThis.fetch;
+globalThis.fetch = (input: string | URL | Request, init?: RequestInit) => {
+  const url = new URL(input instanceof Request ? input.url : String(input));
+  if (url.hostname.endsWith("localhost") && url.hostname !== "localhost") {
+    url.hostname = "127.0.0.1";
+    return realFetch(
+      url,
+      input instanceof Request ? { method: input.method, headers: input.headers, ...init } : init,
+    );
+  }
+  return realFetch(input, init);
+};
+
 const vcConfig = JSON.parse(readFileSync(join(functionDir, ".vc-config.json"), "utf8")) as {
   handler: string;
 };

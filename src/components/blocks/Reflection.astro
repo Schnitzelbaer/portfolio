@@ -1,5 +1,7 @@
 ---
-/** Closing list of learnings. Write a Markdown list inside. */
+import SectionLabel from "../SectionLabel.astro";
+
+/** Closing list of learnings. Write a Markdown list inside; items render numbered. */
 interface Props {
   title?: string;
 }
@@ -7,6 +9,42 @@ const { title = "Reflection" } = Astro.props;
 ---
 
 <section class="block reflection" aria-label={title}>
-  <p class="reflection__title">{title}</p>
+  <SectionLabel as="h2">{title}</SectionLabel>
   <div class="reflection__body"><slot /></div>
 </section>
+
+<style>
+  .reflection {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--divider);
+  }
+  .reflection__body {
+    margin-top: 1rem;
+  }
+  .reflection__body :global(ul),
+  .reflection__body :global(ol) {
+    list-style: none;
+    padding: 0;
+    counter-reset: reflection;
+  }
+  .reflection__body :global(li) {
+    counter-increment: reflection;
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    padding: 0.875rem 0;
+    margin: 0;
+    color: var(--text);
+    font-size: var(--text-ui);
+  }
+  .reflection__body :global(li + li) {
+    border-top: 1px dotted var(--border-strong);
+  }
+  .reflection__body :global(li)::before {
+    content: counter(reflection, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-mono);
+    color: var(--text-subtle);
+    padding-top: 0.2rem;
+  }
+</style>

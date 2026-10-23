@@ -1,0 +1,37 @@
+---
+/** "Label ········ Value" row with a dotted leader line, used for lists and key facts. */
+interface Props {
+  as?: "li" | "div";
+}
+const { as: Tag = "div" } = Astro.props;
+---
+
+<Tag class="leader">
+  <span class="leader__start"><slot /></span>
+  <span class="leader__line" aria-hidden="true"></span>
+  <span class="leader__end"><slot name="end" /></span>
+</Tag>
+
+<style>
+  .leader {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .leader__start {
+    min-width: 0;
+  }
+  .leader__line {
+    flex: 1 1 1.5rem;
+    min-width: 1.5rem;
+    border-bottom: 1px dotted var(--border-strong);
+    transform: translateY(-0.3em);
+    opacity: 0.8;
+  }
+  .leader__end {
+    flex: none;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

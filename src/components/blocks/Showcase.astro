@@ -10,7 +10,13 @@ interface Props {
 const { id, caption } = Astro.props;
 ---
 
-<figure class="block showcase" data-showcase={id}>
-  <div class="showcase__frame" role="img" aria-label={`Showcase: ${caption ?? id}`}></div>
+<figure class="block showcase is-wide" data-showcase={id}>
+  <div class="showcase__frame media" role="img" aria-label={`Showcase: ${caption ?? id}`}></div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
+
+<style>
+  .showcase__frame {
+    aspect-ratio: 16 / 10;
+  }
+</style>

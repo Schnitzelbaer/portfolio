@@ -1,5 +1,7 @@
 ---
-/** Missing image, written as `[Screen: description]` in Notion. */
+import Icon from "../Icon.astro";
+
+/** Missing image, written as `[Screen: description]` in Notion. Highlighted in dev. */
 interface Props {
   label: string;
   inline?: boolean;
@@ -10,13 +12,51 @@ const dev = import.meta.env.DEV;
 
 {
   inline ? (
-    <span class:list={["placeholder", "placeholder--inline", { "is-draft": dev }]}>[Screen: {label}]</span>
+    <span class:list={["placeholder-inline", { "is-draft": dev }]}>[Screen: {label}]</span>
   ) : (
     <figure class:list={["block", "placeholder", { "is-draft": dev }]} data-draft="screen">
       <div class="placeholder__frame" role="img" aria-label={`Image placeholder: ${label}`}>
-        <span class="placeholder__tag" aria-hidden="true">Screen</span>
+        <Icon name="image" size={20} />
         <span class="placeholder__label">{label}</span>
+        {dev && <span class="placeholder__tag mono">Open · Screen</span>}
       </div>
     </figure>
   )
 }
+
+<style>
+  .placeholder__frame {
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.625rem;
+    aspect-ratio: 16 / 10;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px dashed var(--border-strong);
+    background: var(--surface);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: var(--text-ui);
+  }
+  .placeholder__tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    color: var(--draft);
+  }
+  .is-draft .placeholder__frame {
+    border-color: var(--draft);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, var(--draft) 10%, transparent) 12px 13px),
+      var(--draft-surface);
+  }
+  .placeholder-inline.is-draft {
+    color: var(--draft);
+    background: var(--draft-surface);
+    border-radius: 4px;
+    padding: 0 0.25em;
+    outline: 1px dashed var(--draft);
+  }
+</style>

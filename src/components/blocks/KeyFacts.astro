@@ -1,5 +1,5 @@
 ---
-/** Role, client, team and status from the case study frontmatter. */
+/** Role, client, team and status from the case study frontmatter, as dotted leader rows. */
 interface Props {
   role: string;
   client: string;
@@ -19,9 +19,37 @@ const facts = [
   {
     facts.map(([term, value]) => (
       <div class="key-facts__row">
-        <dt>{term}</dt>
+        <dt class="mono">{term}</dt>
+        <span class="key-facts__line" aria-hidden="true" />
         <dd>{value}</dd>
       </div>
     ))
   }
 </dl>
+
+<style>
+  .key-facts {
+    display: grid;
+    gap: 0.625rem;
+    font-size: var(--text-ui);
+  }
+  .key-facts__row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+  dt {
+    flex: none;
+  }
+  .key-facts__line {
+    flex: 1 1 1rem;
+    min-width: 1rem;
+    border-bottom: 1px dotted var(--border-strong);
+    transform: translateY(-0.3em);
+  }
+  dd {
+    color: var(--text);
+    text-align: right;
+    max-width: 70%;
+  }
+</style>

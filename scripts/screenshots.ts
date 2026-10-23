@@ -48,7 +48,11 @@ for (const theme of themes) {
         Promise.all([...document.images].map((img) => img.decode().catch(() => undefined))),
       );
       const name = `${path === "/" ? "work" : path.slice(1).replaceAll("/", "-")}--${viewport.name}--${theme}.png`;
-      await page.screenshot({ path: `screenshots/${name}`, fullPage: true });
+      await page.screenshot({
+        path: `screenshots/${name}`,
+        fullPage: true,
+        animations: "disabled",
+      });
       console.log(`screenshots/${name}`);
     }
     await context.close();

@@ -1,32 +1,28 @@
 ---
-import { Image } from "astro:assets";
-import { render } from "astro:content";
-import KeyFacts from "../../components/blocks/KeyFacts.astro";
-import { blocks } from "../../components/blocks/registry";
+import CaseStudy from "../../components/CaseStudy.astro";
 import Base from "../../layouts/Base.astro";
 import { getWork, type WorkEntry } from "../../lib/work";
 
 export async function getStaticPaths() {
   const work = await getWork();
-  return work.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  return work.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: work[(i + 1) % work.length] },
+  }));
 }
 
 interface Props {
   entry: WorkEntry;
+  next: WorkEntry | undefined;
 }
-const { entry } = Astro.props;
-const { data } = entry;
+const { entry, next } = Astro.props;
 // Locked case studies never render their body into static output. Phase (e) moves them behind
 // the server-side gate.
-const Content = data.locked ? null : (await render(entry)).Content;
+const showBody = !entry.data.locked;
 ---
 
-<Base title={data.title} description={data.lead} noindex={data.locked}>
-  <article>
-    <h1>{data.title}</h1>
-    <p>{data.lead}</p>
-    <KeyFacts {...data.keyFacts} />
-    <Image src={data.cover} alt={data.coverAlt} widths={[800, 1600]} sizes="(min-width: 760px) 680px, 100vw" loading="eager" />
-    {Content ? <Content components={blocks} /> : <p>This case study is password protected.</p>}
-  </article>
+<Base title={entry.data.title} description={entry.data.lead} noindex={entry.data.locked} current="work">
+  <CaseStudy entry={entry} next={next} showBody={showBody}>
+    <p slot="gate">This case study is password protected.</p>
+  </CaseStudy>
 </Base>

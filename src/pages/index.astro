@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import WorkIndex from "../components/WorkIndex.astro";
 import Base from "../layouts/Base.astro";
 import { site } from "../lib/site";
 import { getWork } from "../lib/work";
@@ -7,24 +7,6 @@ import { getWork } from "../lib/work";
 const work = await getWork();
 ---
 
-<Base>
-  <h1>{site.work.label}</h1>
-  <p>{site.work.intro}</p>
-  <ul>
-    {
-      work.map((entry) => (
-        <li>
-          <a href={`/work/${entry.id}`}>
-            <Image src={entry.data.cover} alt={entry.data.coverAlt} widths={[400, 800]} sizes="400px" />
-            <h2>
-              {entry.data.title}
-              {entry.data.locked && <span> (locked)</span>}
-            </h2>
-          </a>
-          <p>{entry.data.keyFacts.role}</p>
-          <p>{entry.data.outcome}</p>
-        </li>
-      ))
-    }
-  </ul>
+<Base current="work">
+  <WorkIndex label={site.work.label} intro={site.work.intro} entries={work} />
 </Base>

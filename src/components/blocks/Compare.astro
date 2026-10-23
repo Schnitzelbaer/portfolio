@@ -7,7 +7,15 @@ interface Props {
 const { kind = "before-after", caption } = Astro.props;
 ---
 
-<figure class="block compare" data-kind={kind}>
+<figure class="block compare is-wide" data-kind={kind} aria-label={kind === "before-after" ? "Before and after" : "Variant comparison"}>
   <div class="compare__items"><slot /></div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
+
+<style>
+  .compare__items {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+</style>

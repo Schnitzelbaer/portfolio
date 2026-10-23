@@ -1,4 +1,6 @@
 ---
+import Icon from "../Icon.astro";
+
 /**
  * Section that is only visible after entering the password.
  * Its content is never rendered into public output. Phase (e) adds the server-side unlock.
@@ -10,6 +12,42 @@ const { title = "Protected section" } = Astro.props;
 ---
 
 <section class="block locked" aria-label={title}>
-  <p class="locked__title">{title}</p>
-  <p class="locked__note">This part of the case study is password protected.</p>
+  <span class="locked__icon"><Icon name="lock" size={16} /></span>
+  <div>
+    <p class="locked__title">{title}</p>
+    <p class="locked__note">This part of the case study is password protected.</p>
+  </div>
 </section>
+
+<style>
+  .locked {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+    padding: 1.125rem 1.25rem;
+    border-radius: var(--radius);
+    border: 1px dashed var(--border-strong);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--border) 50%, transparent) 10px 11px),
+      var(--bg-elevated);
+  }
+  .locked__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--surface-strong);
+    color: var(--text);
+  }
+  .locked__title {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .locked__note {
+    margin-top: 0.125rem;
+    color: var(--text-muted);
+    font-size: var(--text-ui);
+  }
+</style>

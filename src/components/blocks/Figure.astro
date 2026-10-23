@@ -16,16 +16,23 @@ interface Props {
 }
 const { src, privateId, alt, caption, size = "content" } = Astro.props;
 const sizes =
-  size === "full" ? "100vw" : size === "wide" ? "(min-width: 1200px) 1100px, 100vw" : "(min-width: 760px) 680px, 100vw";
+  size === "full"
+    ? "100vw"
+    : size === "wide"
+      ? "(min-width: 800px) 736px, calc(100vw - 48px)"
+      : "(min-width: 560px) 496px, calc(100vw - 48px)";
+const widths = [480, 736, 992, 1472, 2000].filter((w) => !src || w <= src.width);
 ---
 
-<figure class:list={["block", "figure", `figure--${size}`]}>
-  {
-    src ? (
-      <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={[480, 800, 1200, 1600, 2200].filter((w) => w <= src.width)} sizes={sizes} />
-    ) : privateId ? (
-      <LockedMedia id={privateId} alt={alt} />
-    ) : null
-  }
+<figure class:list={["block", "figure", { "is-wide": size === "wide", "is-full": size === "full" }]}>
+  <div class="media">
+    {
+      src ? (
+        <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={widths} sizes={sizes} />
+      ) : privateId ? (
+        <LockedMedia id={privateId} alt={alt} />
+      ) : null
+    }
+  </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

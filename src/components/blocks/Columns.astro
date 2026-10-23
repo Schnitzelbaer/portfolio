@@ -2,4 +2,12 @@
 /** Side-by-side layout for `<Column>` children; stacks on small screens. */
 ---
 
-<div class="block columns"><slot /></div>
+<div class="block columns is-wide"><slot /></div>
+
+<style>
+  .columns {
+    display: grid;
+    gap: 1.5rem 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+</style>

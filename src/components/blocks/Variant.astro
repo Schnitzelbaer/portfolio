@@ -11,15 +11,35 @@ interface Props {
   alt: string;
 }
 const { label, src, privateId, alt } = Astro.props;
+const widths = [360, 480, 736, 1000].filter((w) => !src || w <= src.width);
 ---
 
-<div class="compare__variant">
-  <p class="compare__label">{label}</p>
-  {
-    src ? (
-      <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={[400, 800, 1200].filter((w) => w <= src.width)} sizes="(min-width: 760px) 340px, 100vw" />
-    ) : privateId ? (
-      <LockedMedia id={privateId} alt={alt} />
-    ) : null
-  }
+<div class="variant">
+  <div class="media">
+    {
+      src ? (
+        <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={widths} sizes="(min-width: 800px) 362px, calc(100vw - 48px)" />
+      ) : privateId ? (
+        <LockedMedia id={privateId} alt={alt} />
+      ) : null
+    }
+  </div>
+  <p class="variant__label mono">{label}</p>
 </div>
+
+<style>
+  .variant {
+    position: relative;
+  }
+  .variant__label {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-pill);
+    background: rgb(23 22 29 / 0.72);
+    color: #ececf1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+</style>

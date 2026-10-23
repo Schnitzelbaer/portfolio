@@ -1,7 +1,9 @@
 ---
+import Icon from "../Icon.astro";
+
 /**
  * Stand-in for an image that lives behind the password gate.
- * Phase (e) replaces this with the gated `/_private` image when the visitor is unlocked.
+ * Phase (e) swaps this for the gated `/_private` image when the visitor is unlocked.
  */
 interface Props {
   id: string;
@@ -10,6 +12,18 @@ interface Props {
 const { alt } = Astro.props;
 ---
 
-<div class="locked-media" role="img" aria-label={`Locked image: ${alt}`}>
-  <span aria-hidden="true">Locked</span>
+<div class="locked-media" role="img" aria-label={`Protected image: ${alt}`}>
+  <Icon name="lock" size={18} />
 </div>
+
+<style>
+  .locked-media {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    color: var(--text-subtle);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--border) 60%, transparent) 10px 11px),
+      var(--surface);
+  }
+</style>

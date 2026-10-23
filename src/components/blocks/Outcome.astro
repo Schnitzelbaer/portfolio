@@ -1,4 +1,6 @@
 ---
+import Icon from "../Icon.astro";
+
 /** Results of the project: what was achieved, or what is expected. */
 interface Props {
   type: "achieved" | "expected";
@@ -9,7 +11,76 @@ const label = type === "achieved" ? "Achieved" : "Expected";
 ---
 
 <section class="block outcome" data-type={type} aria-label={title ?? label}>
-  <p class="outcome__label">{label}</p>
+  <p class="outcome__label mono">
+    <span class="outcome__badge">{type === "achieved" ? <Icon name="check" size={12} /> : <Icon name="clock" size={12} />}</span>
+    {label}
+  </p>
   {title && <p class="outcome__title">{title}</p>}
   <div class="outcome__body"><slot /></div>
 </section>
+
+<style>
+  .outcome {
+    padding: 1.125rem 1.25rem;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .outcome[data-type="achieved"] {
+    background: color-mix(in srgb, var(--accent-surface) 45%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, var(--border));
+  }
+  .outcome__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+  }
+  .outcome[data-type="achieved"] .outcome__label {
+    color: var(--accent-ink);
+  }
+  .outcome__badge {
+    display: grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: var(--surface-strong);
+  }
+  .outcome[data-type="achieved"] .outcome__badge {
+    background: var(--accent-surface);
+  }
+  .outcome__title {
+    margin-top: 0.5rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .outcome__body {
+    margin-top: 0.75rem;
+    color: var(--text);
+    font-size: var(--text-ui);
+  }
+  .outcome__body :global(ul) {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .outcome__body :global(li) {
+    position: relative;
+    padding-left: 1.125rem;
+    margin: 0;
+  }
+  .outcome__body :global(li)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--text-subtle);
+  }
+  .outcome[data-type="achieved"] .outcome__body :global(li)::before {
+    background: var(--accent);
+  }
+</style>

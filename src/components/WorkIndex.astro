@@ -1,0 +1,59 @@
+---
+import type { WorkEntry } from "../lib/work";
+import ProjectCard from "./ProjectCard.astro";
+import SectionLabel from "./SectionLabel.astro";
+
+interface Props {
+  label: string;
+  intro: string;
+  /** Optional personal note shown above the intro (application variants). */
+  greeting?: string | undefined;
+  entries: WorkEntry[];
+}
+const { label, intro, greeting, entries } = Astro.props;
+---
+
+<div class="work full">
+  <div class="work__head">
+    <div class="reveal" style="--i: 0"><SectionLabel as="h1">{label}</SectionLabel></div>
+    {greeting && <p class="work__greeting reveal" style="--i: 1">{greeting}</p>}
+    <p class="work__intro reveal" style="--i: 1">{intro}</p>
+  </div>
+  <ul role="list" class="work__grid">
+    {entries.map((entry, index) => <ProjectCard entry={entry} index={index} eager={index < 3} />)}
+  </ul>
+</div>
+
+<style>
+  .work {
+    padding-top: 3.75rem;
+  }
+  .work__head {
+    max-width: 34rem;
+    margin-bottom: 2.25rem;
+  }
+  .work__intro,
+  .work__greeting {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+  }
+  .work__greeting {
+    color: var(--text);
+  }
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 2.75rem 0.75rem;
+  }
+  @media (max-width: 40rem) {
+    .work {
+      padding-top: 3rem;
+    }
+    .work__intro {
+      font-size: var(--text-md);
+    }
+  }
+</style>

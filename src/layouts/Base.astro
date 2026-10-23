@@ -1,37 +1,53 @@
 ---
-import "../styles/base.css";
+import interUrl from "../assets/fonts/inter-latin-wght.woff2?url";
+import monoUrl from "../assets/fonts/geist-mono-latin-wght.woff2?url";
+import Footer from "../components/Footer.astro";
+import Nav from "../components/Nav.astro";
 import { site } from "../lib/site";
+import "../styles/base.css";
 
 interface Props {
-  title?: string;
-  description?: string;
+  title?: string | undefined;
+  description?: string | undefined;
   noindex?: boolean;
+  current?: "work" | "about" | undefined;
+  agentHref?: string | undefined;
 }
-const { title, description = site.work.intro, noindex = false } = Astro.props;
+const { title, description = site.work.intro, noindex = false, current, agentHref } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      try {
+        const stored = localStorage.getItem("theme");
+        if (stored === "light" || stored === "dark") document.documentElement.dataset.theme = stored;
+      } catch {}
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#17161d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f6f8" media="(prefers-color-scheme: light)" />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header>
-      <nav aria-label="Main">
-        <a href="/" aria-current={Astro.url.pathname === "/" ? "page" : undefined}>Work</a>
-        <a href="/about" aria-current={Astro.url.pathname === "/about" ? "page" : undefined}>About</a>
-      </nav>
+      <Nav current={current} />
     </header>
     <main id="main">
       <slot />
     </main>
+    <Footer agentHref={agentHref} />
   </body>
 </html>

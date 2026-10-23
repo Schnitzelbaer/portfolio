@@ -1,0 +1,102 @@
+---
+import Icon, { type IconName } from "./Icon.astro";
+
+/** Pill tabs. On small screens inactive tabs collapse to their icon, like the reference. */
+interface Props {
+  current: "work" | "about" | undefined;
+}
+const { current } = Astro.props;
+const items: Array<{ id: "work" | "about"; label: string; href: string; icon: IconName }> = [
+  { id: "work", label: "Work", href: "/", icon: "work" },
+  { id: "about", label: "About", href: "/about", icon: "about" },
+];
+---
+
+<nav class="nav" aria-label="Main">
+  <ul role="list">
+    {
+      items.map((item) => {
+        const active = item.id === current;
+        return (
+          <li>
+            <a href={item.href} class:list={["nav__link", { "is-active": active }]} aria-current={active ? "page" : undefined}>
+              {active && <span class="nav__pill" aria-hidden="true" />}
+              <Icon name={item.icon} size={16} class="nav__icon" />
+              <span class="nav__label">{item.label}</span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav {
+    padding-top: 4.25rem;
+    display: flex;
+    justify-content: center;
+  }
+  ul {
+    display: flex;
+    gap: 0.375rem;
+  }
+  .nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.125rem;
+    padding: 0 0.875rem;
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    isolation: isolate;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .nav__link:hover {
+    color: var(--text);
+  }
+  .nav__link.is-active {
+    color: var(--text);
+  }
+  .nav__pill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, var(--surface-strong), var(--surface));
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-pill);
+    view-transition-name: nav-pill;
+    z-index: -1;
+  }
+  .nav__link :global(.nav__icon) {
+    flex: none;
+    opacity: 0.9;
+  }
+  @media (max-width: 40rem) {
+    .nav {
+      padding-top: 1.75rem;
+      justify-content: flex-start;
+      width: calc(100% - 2 * var(--gutter));
+      margin-inline: auto;
+    }
+    .nav__link:not(.is-active) {
+      padding: 0 0.625rem;
+    }
+    .nav__link:not(.is-active) .nav__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+    .nav__link :global(.nav__icon) {
+      width: 18px;
+      height: 18px;
+    }
+  }
+</style>

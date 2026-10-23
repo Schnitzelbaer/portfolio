@@ -14,3 +14,26 @@ const { icon, title } = Astro.props;
     <slot />
   </div>
 </aside>
+
+<style>
+  .callout {
+    display: flex;
+    gap: 0.875rem;
+    padding: 1rem 1.125rem;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 0 0 1px var(--border);
+    font-size: var(--text-ui);
+    color: var(--text-muted);
+  }
+  .callout__icon {
+    flex: none;
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+  .callout__title {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+</style>

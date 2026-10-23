@@ -7,6 +7,56 @@ const { title } = Astro.props;
 ---
 
 <aside class="block decision" aria-label={`Decision: ${title}`}>
-  <p class="decision__title"><span class="decision__label">Decision:</span> {title}</p>
+  <p class="decision__title">
+    <span class="decision__label"><span class="decision__mark" aria-hidden="true"></span>Decision:</span>
+    {title}
+  </p>
   <div class="decision__body"><slot /></div>
 </aside>
+
+<style>
+  .decision {
+    position: relative;
+    padding: 1.125rem 1.25rem 1.25rem 1.375rem;
+    border-radius: var(--radius);
+    background: linear-gradient(to bottom, var(--surface), color-mix(in srgb, var(--surface) 55%, var(--bg)));
+    box-shadow: 0 0 0 1px var(--border);
+    overflow: hidden;
+  }
+  .decision::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--accent);
+  }
+  .decision__title {
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--text-md);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  .decision__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: 0.25rem;
+    color: var(--accent-ink);
+  }
+  .decision__mark {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background: currentColor;
+    transform: rotate(45deg);
+  }
+  .decision__body {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: var(--text-ui);
+  }
+  .decision__body > :global(* + *) {
+    margin-top: 0.75rem;
+  }
+</style>

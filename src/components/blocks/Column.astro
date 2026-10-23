@@ -5,7 +5,21 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="column">
-  {title && <p class="column__title">{title}</p>}
-  <slot />
+<div class="col">
+  {title && <p class="col__title mono">{title}</p>}
+  <div class="col__body"><slot /></div>
 </div>
+
+<style>
+  .col {
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--divider);
+  }
+  .col__body {
+    margin-top: 0.5rem;
+    font-size: var(--text-ui);
+  }
+  .col__body > :global(* + *) {
+    margin-top: 0.75rem;
+  }
+</style>

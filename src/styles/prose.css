@@ -1,0 +1,121 @@
+/*
+ * Case study body. A named grid lets blocks break out of the reading column:
+ * text sits in `content`, figures and comparisons can use `wide`.
+ */
+.prose {
+  --side: calc((var(--col-wide) - var(--col)) / 2);
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gutter), 1fr)
+    [wide-start] minmax(0, var(--side))
+    [content-start] min(var(--col), 100% - 2 * var(--gutter))
+    [content-end] minmax(0, var(--side))
+    [wide-end] minmax(var(--gutter), 1fr)
+    [full-end];
+  color: var(--text-body);
+}
+.prose > * {
+  grid-column: content;
+}
+.prose > .is-wide {
+  grid-column: wide;
+}
+.prose > .is-full {
+  grid-column: full;
+}
+.prose > * + * {
+  margin-top: 1.125rem;
+}
+.prose > h2 {
+  margin-top: 3.25rem;
+  font-size: var(--text-lg);
+  letter-spacing: -0.015em;
+}
+.prose > h3 {
+  margin-top: 2.25rem;
+  font-size: var(--text-md);
+}
+.prose > h2 + *,
+.prose > h3 + * {
+  margin-top: 0.75rem;
+}
+.prose > .block {
+  margin-top: 2rem;
+}
+.prose > .block + :not(.block) {
+  margin-top: 2rem;
+}
+.prose strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.prose a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
+}
+.prose li + li {
+  margin-top: 0.375rem;
+}
+.prose li::marker {
+  color: var(--text-subtle);
+}
+.prose > blockquote {
+  padding-left: 1.125rem;
+  border-left: 2px solid var(--border-strong);
+  color: var(--text);
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.1em 0.35em;
+  border-radius: 0.3em;
+  background: var(--surface);
+  color: var(--text);
+}
+.prose figcaption,
+.caption {
+  margin-top: 0.75rem;
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--divider);
+  margin-block: 2.5rem;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-ui);
+}
+.prose th,
+.prose td {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--divider);
+  text-align: left;
+}
+.prose th {
+  color: var(--text);
+  font-weight: 600;
+}
+/* Rounded media inside the case study. */
+.media {
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+}
+.media img {
+  width: 100%;
+}

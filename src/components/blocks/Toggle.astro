@@ -1,4 +1,6 @@
 ---
+import Icon from "../Icon.astro";
+
 /** Collapsible section. Notion toggles map to this component. */
 interface Props {
   summary: string;
@@ -7,6 +9,41 @@ const { summary } = Astro.props;
 ---
 
 <details class="block toggle">
-  <summary>{summary}</summary>
+  <summary>
+    <span>{summary}</span>
+    <Icon name="chevron" size={16} class="toggle__chevron" />
+  </summary>
   <div class="toggle__body"><slot /></div>
 </details>
+
+<style>
+  .toggle {
+    border-block: 1px solid var(--divider);
+  }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 0;
+    color: var(--text);
+    font-weight: 500;
+    font-size: var(--text-ui);
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  :global(.toggle__chevron) {
+    color: var(--text-muted);
+    transition: transform var(--duration) var(--ease-out);
+  }
+  .toggle[open] :global(.toggle__chevron) {
+    transform: rotate(180deg);
+  }
+  .toggle__body {
+    padding-bottom: 1rem;
+    font-size: var(--text-ui);
+  }
+</style>

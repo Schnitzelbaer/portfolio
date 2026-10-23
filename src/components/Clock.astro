@@ -1,0 +1,71 @@
+---
+/**
+ * Live local time with rolling digits, like the reference's location line.
+ * Renders the build-time clock as a fallback; the script takes over in the browser.
+ */
+interface Props {
+  timezone: string;
+}
+const { timezone } = Astro.props;
+const format = (date: Date) =>
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: timezone,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(date);
+const initial = format(new Date());
+---
+
+<time class="clock" data-clock data-timezone={timezone} aria-label={`Local time in ${timezone}`}>
+  {initial.split("").map((char) => <span class="clock__char">{char}</span>)}
+</time>
+
+<script>
+  for (const clock of document.querySelectorAll<HTMLElement>("[data-clock]")) {
+    const format = new Intl.DateTimeFormat("en-GB", {
+      timeZone: clock.dataset.timezone,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const chars = [...clock.querySelectorAll<HTMLElement>(".clock__char")];
+    const tick = () => {
+      const next = format.format(new Date());
+      next.split("").forEach((char, i) => {
+        const el = chars[i];
+        if (!el || el.textContent === char) return;
+        el.textContent = char;
+        el.classList.remove("is-rolling");
+        void el.offsetWidth;
+        el.classList.add("is-rolling");
+      });
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>
+
+<style>
+  .clock {
+    display: inline-flex;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock__char {
+    display: inline-block;
+    min-width: 1ch;
+    text-align: center;
+  }
+  .clock__char:global(.is-rolling) {
+    animation: roll 380ms var(--ease-out);
+  }
+  @keyframes roll {
+    from {
+      transform: translateY(-55%);
+      opacity: 0;
+      filter: blur(2px);
+    }
+  }
+</style>

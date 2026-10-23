@@ -3,4 +3,24 @@
 const dev = import.meta.env.DEV;
 ---
 
-<mark class:list={["gap", { "is-draft": dev }]} data-draft="gap" title={dev ? "Open placeholder" : undefined}>[…]</mark>
+{
+  dev ? (
+    <mark class="gap" data-draft="gap" title="Open placeholder">
+      […]
+    </mark>
+  ) : (
+    <span class="gap-plain">[…]</span>
+  )
+}
+
+<style>
+  .gap {
+    padding: 0 0.3em;
+    border-radius: 4px;
+    background: var(--draft-surface);
+    color: var(--draft);
+    outline: 1px dashed var(--draft);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+</style>

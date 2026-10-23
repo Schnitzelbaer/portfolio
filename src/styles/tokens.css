@@ -1,0 +1,93 @@
+/*
+ * Design tokens. Dark is the default theme; light is applied via [data-theme="light"].
+ * Values follow the reference look (abstract.systems) with larger type and AA contrast:
+ * every text color below passes 4.5:1 on --bg and --surface (checked by tests/unit/contrast.test.ts).
+ */
+:root {
+  color-scheme: dark;
+
+  /* Color */
+  --bg: #17161d;
+  --bg-elevated: #1c1b23;
+  --surface: #25252d;
+  --surface-strong: #2d2e36;
+  --surface-hover: #2a2a33;
+  --border: #2c2b34;
+  --border-strong: #3a3943;
+  --divider: #26252d;
+  --text: #ececf1;
+  --text-strong: #f4f4f7;
+  --text-body: #a6a6af;
+  --text-muted: #93939c;
+  --text-subtle: #8f8f98;
+  --accent: #3fc77c;
+  --accent-ink: #5ad893;
+  --accent-surface: #173527;
+  --draft: #f59e0b;
+  --draft-surface: #3a2a0c;
+  --focus: #8fb4ff;
+  --shadow-pill:
+    inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 14px rgb(0 0 0 / 0.25);
+  --fade: linear-gradient(to top, var(--bg) 10%, rgb(23 22 29 / 0));
+
+  /* Type */
+  --font-sans:
+    "Inter", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --text-xs: 0.75rem; /* 12px: mono micro labels */
+  --text-sm: 0.8125rem; /* 13px: tags, captions */
+  --text-ui: 0.9375rem; /* 15px: navigation, lists */
+  --text-base: 1rem; /* 16px: body on mobile */
+  --text-md: 1.0625rem; /* 17px: body on desktop */
+  --text-lg: 1.1875rem; /* 19px: lead, role */
+  --text-xl: 1.5rem; /* 24px: name, page title */
+  --leading: 1.6;
+  --leading-tight: 1.25;
+  --tracking-label: 0.08em;
+  --tracking-mono: 0.06em;
+
+  /* Layout */
+  --col: 31rem;
+  --col-wide: 46rem;
+  --gutter: 1.5rem;
+  --radius-sm: 0.5rem;
+  --radius: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-pill: 999px;
+  --space-section: 3rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --duration-fast: 160ms;
+  --duration: 320ms;
+  --duration-slow: 640ms;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f6f6f8;
+  --bg-elevated: #ffffff;
+  --surface: #ebebf0;
+  --surface-strong: #ffffff;
+  --surface-hover: #e3e3ea;
+  --border: #dedde5;
+  --border-strong: #c9c8d2;
+  --divider: #e3e2e9;
+  --text: #18171e;
+  --text-strong: #0e0d12;
+  --text-body: #4b4b54;
+  --text-muted: #5b5b64;
+  --text-subtle: #62626b;
+  --accent: #1f9a57;
+  --accent-ink: #157342;
+  --accent-surface: #dcf3e5;
+  --draft: #b45309;
+  --draft-surface: #fdf0d8;
+  --focus: #2f5fd0;
+  --shadow-pill:
+    inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(20 20 30 / 0.08),
+    0 4px 14px rgb(20 20 30 / 0.06);
+  --fade: linear-gradient(to top, var(--bg) 10%, rgb(246 246 248 / 0));
+}

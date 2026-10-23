@@ -14,7 +14,8 @@
     "test": "vitest run",
     "check:drafts": "tsx scripts/check-drafts.ts",
     "import:notion": "tsx scripts/import-notion.ts",
-    "screenshots": "tsx scripts/screenshots.ts"
+    "screenshots": "tsx scripts/screenshots.ts",
+    "showcases:fallbacks": "tsx scripts/showcase-fallbacks.ts"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.4",

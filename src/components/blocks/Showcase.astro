@@ -1,22 +1,300 @@
 ---
+import { getImage } from "astro:assets";
+import { getShowcase } from "../../lib/showcases";
+import Icon from "../Icon.astro";
+
 /**
- * Embeds a code-based tour animation from `showcases/<id>/`.
- * Phase (c) adds the tour runtime; until then the static fallback frame is shown.
+ * Embeds a code-based tour from `showcases/<id>/`: a prototype (or diagram) that plays a
+ * declarative tour with cursor, captions and a timeline. See `src/lib/tour/types.ts`.
  */
 interface Props {
   id: string;
   caption?: string;
 }
 const { id, caption } = Astro.props;
+const showcase = getShowcase(id);
+if (!showcase) {
+  throw new Error(`<Showcase id="${id}">: no folder showcases/${id}/ or showcases/_locked/${id}/ with a showcase.config.ts`);
+}
+const { config, locked } = showcase;
+const unlocked = Boolean((Astro.locals as { unlocked?: boolean }).unlocked);
+const available = !locked || unlocked;
+const privateBase = locked && unlocked ? `/_private/showcases/${id}/` : undefined;
+
+// Aspect ratio per variant, so the frame never shifts when the prototype loads.
+const scope = `[data-showcase-id="${id}"] .showcase__stage`;
+const aspectCss = [...config.variants]
+  .reverse()
+  .map((v) => {
+    const rule = `${scope}{aspect-ratio:${v.size[0]}/${v.size[1]}}`;
+    return v.media ? `@media ${v.media}{${rule}}` : rule;
+  })
+  .join("");
+
+const fallbacks = await Promise.all(
+  config.variants.map(async (variant) => {
+    const image = config.fallbacks?.[variant.name];
+    if (!image || !available) return undefined;
+    const [avif, webp] = await Promise.all(
+      (["avif", "webp"] as const).map((format) =>
+        getImage({ src: image, format, widths: [480, 800, 1200, 1600].filter((w) => w <= image.width) }),
+      ),
+    );
+    return { variant, avif, webp };
+  }),
+);
+const defaultFallback = fallbacks.findLast(Boolean);
+const variantsJson = JSON.stringify(config.variants);
 ---
 
-<figure class="block showcase is-wide" data-showcase={id}>
-  <div class="showcase__frame media" role="img" aria-label={`Showcase: ${caption ?? id}`}></div>
+<figure
+  class:list={["block", "showcase", "is-wide", { "showcase--locked": !available }]}
+  data-showcase={available ? id : undefined}
+  data-showcase-id={id}
+  data-variants={variantsJson}
+  data-cursor={config.cursor === false ? "false" : undefined}
+  data-loop={config.loop === false ? "false" : undefined}
+  data-private-base={privateBase}
+  data-state="idle"
+>
+  <style is:inline set:html={aspectCss}></style>
+  <div class="showcase__stage" data-stage>
+    {
+      defaultFallback && (
+        <picture class="showcase__fallback">
+          {fallbacks.map((f) =>
+            f ? (
+              <>
+                <source type="image/avif" srcset={f.avif.srcSet.attribute} media={f.variant.media} sizes="(min-width: 800px) 736px, calc(100vw - 48px)" />
+                <source type="image/webp" srcset={f.webp.srcSet.attribute} media={f.variant.media} sizes="(min-width: 800px) 736px, calc(100vw - 48px)" />
+              </>
+            ) : null,
+          )}
+          <img src={defaultFallback.webp.src} alt="" loading="lazy" decoding="async" />
+        </picture>
+      )
+    }
+    {
+      available ? (
+        <>
+          <div class="showcase__viewport" data-viewport inert aria-hidden="true" />
+          <div class="showcase__cursor" data-cursor aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <path d="M5 3.5 19 12l-6.3 1.4L9.3 19.5Z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <p class="showcase__caption" data-caption aria-hidden="true" />
+        </>
+      ) : (
+        <div class="showcase__locked">
+          <Icon name="lock" size={18} />
+          <span>Protected prototype</span>
+        </div>
+      )
+    }
+  </div>
+  {
+    available && (
+      <div class="showcase__controls">
+        <button type="button" class="showcase__button" data-play data-mode="play" aria-label="Play tour">
+          <Icon name="play" size={14} class="icon-play" />
+          <Icon name="pause" size={14} class="icon-pause" />
+        </button>
+        <button type="button" class="showcase__button" data-replay aria-label="Replay tour">
+          <Icon name="replay" size={14} />
+        </button>
+        <div class="showcase__timeline" aria-hidden="true">
+          <span class="showcase__fill" data-progress />
+          <span class="showcase__ticks" data-ticks />
+        </div>
+        <span class="showcase__chapter mono" data-chapter aria-live="polite" />
+      </div>
+    )
+  }
   {caption && <figcaption>{caption}</figcaption>}
+  <p class="visually-hidden">{config.title}: {config.description}</p>
 </figure>
 
+<script>
+  import { initShowcases } from "../../lib/tour/player";
+
+  initShowcases();
+</script>
+
 <style>
-  .showcase__frame {
+  .showcase__stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--border);
     aspect-ratio: 16 / 10;
+    isolation: isolate;
+  }
+  .showcase__fallback,
+  .showcase__fallback img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--duration) var(--ease-out);
+  }
+  .showcase[data-state="ready"] .showcase__fallback {
+    opacity: 0;
+  }
+  .showcase__viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    opacity: 0;
+    transition: opacity var(--duration) var(--ease-out);
+  }
+  .showcase[data-state="ready"] .showcase__viewport {
+    opacity: 1;
+  }
+  .showcase__viewport :global(.showcase__host) {
+    width: 100%;
+    height: 100%;
+  }
+  .showcase__cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    margin: -3px 0 0 -4px;
+    opacity: 0;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
+    transition: opacity var(--duration) var(--ease-out);
+    pointer-events: none;
+    will-change: transform;
+  }
+  .showcase__cursor[data-visible="true"] {
+    opacity: 1;
+  }
+  .showcase__cursor svg {
+    transition: transform 120ms var(--ease-out);
+  }
+  .showcase__cursor[data-pressed="true"] svg {
+    transform: scale(0.82);
+  }
+  .showcase__cursor::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.5);
+    transform: scale(0);
+    opacity: 0;
+  }
+  .showcase__cursor[data-pressed="true"]::after {
+    animation: ripple 420ms var(--ease-out);
+  }
+  @keyframes ripple {
+    from {
+      transform: scale(0.2);
+      opacity: 1;
+    }
+    to {
+      transform: scale(1.4);
+      opacity: 0;
+    }
+  }
+  .showcase__caption {
+    position: absolute;
+    left: 50%;
+    top: 0.875rem;
+    z-index: 3;
+    max-width: calc(100% - 2rem);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    background: rgb(23 22 29 / 0.82);
+    color: #ececf1;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transform: translate(-50%, -6px);
+    opacity: 0;
+    transition:
+      opacity var(--duration) var(--ease-out),
+      transform var(--duration) var(--ease-out);
+  }
+  .showcase__caption[data-visible="true"] {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .showcase__locked {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: var(--text-ui);
+  }
+  .showcase__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .showcase__button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--border);
+    color: var(--text);
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .showcase__button:hover {
+    background: var(--surface-hover);
+  }
+  .showcase__button[data-mode="play"] :global(.icon-pause),
+  .showcase__button[data-mode="pause"] :global(.icon-play) {
+    display: none;
+  }
+  .showcase__timeline {
+    position: relative;
+    flex: 1;
+    height: 3px;
+    margin-inline: 0.375rem;
+    border-radius: 2px;
+    background: var(--surface-strong);
+    overflow: hidden;
+  }
+  .showcase__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--text-muted);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .showcase__ticks :global(.showcase__tick) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--bg);
+  }
+  .showcase__chapter {
+    min-width: 7rem;
+    text-align: right;
+  }
+  @media (max-width: 34rem) {
+    .showcase__chapter {
+      min-width: 0;
+    }
   }
 </style>

@@ -1,0 +1,13 @@
+---
+/** Several figures side by side with one shared caption. */
+interface Props {
+  caption?: string;
+  columns?: 2 | 3;
+}
+const { caption, columns = 2 } = Astro.props;
+---
+
+<figure class="block figure-group" data-columns={columns}>
+  <div class="figure-group__items"><slot /></div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

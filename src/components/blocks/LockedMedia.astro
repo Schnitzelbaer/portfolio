@@ -1,0 +1,15 @@
+---
+/**
+ * Stand-in for an image that lives behind the password gate.
+ * Phase (e) replaces this with the gated `/_private` image when the visitor is unlocked.
+ */
+interface Props {
+  id: string;
+  alt: string;
+}
+const { alt } = Astro.props;
+---
+
+<div class="locked-media" role="img" aria-label={`Locked image: ${alt}`}>
+  <span aria-hidden="true">Locked</span>
+</div>

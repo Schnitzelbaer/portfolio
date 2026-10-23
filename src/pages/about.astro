@@ -1,0 +1,29 @@
+---
+import { getEntry, render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import { site } from "../lib/site";
+
+const about = await getEntry("pages", "about");
+if (!about) throw new Error("content/pages/about.mdx is missing");
+const { Content } = await render(about);
+const { title, description, tagline, tags, experience } = about.data;
+---
+
+<Base title={title} description={description}>
+  <p>{site.location}</p>
+  <h1>{site.name}</h1>
+  <p>{site.role}</p>
+  {tagline && <p><strong>{tagline}</strong></p>}
+  <Content />
+  <ul>{tags.map((tag) => <li>{tag}</li>)}</ul>
+  <h2>Experience</h2>
+  <ul>
+    {
+      experience.map((job) => (
+        <li>
+          {job.company}, {job.role}, {job.from} → {job.to}
+        </li>
+      ))
+    }
+  </ul>
+</Base>

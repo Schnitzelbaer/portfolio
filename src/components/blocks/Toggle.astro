@@ -1,0 +1,12 @@
+---
+/** Collapsible section. Notion toggles map to this component. */
+interface Props {
+  summary: string;
+}
+const { summary } = Astro.props;
+---
+
+<details class="block toggle">
+  <summary>{summary}</summary>
+  <div class="toggle__body"><slot /></div>
+</details>

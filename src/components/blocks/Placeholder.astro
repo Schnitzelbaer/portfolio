@@ -1,0 +1,22 @@
+---
+/** Missing image, written as `[Screen: description]` in Notion. */
+interface Props {
+  label: string;
+  inline?: boolean;
+}
+const { label, inline = false } = Astro.props;
+const dev = import.meta.env.DEV;
+---
+
+{
+  inline ? (
+    <span class:list={["placeholder", "placeholder--inline", { "is-draft": dev }]}>[Screen: {label}]</span>
+  ) : (
+    <figure class:list={["block", "placeholder", { "is-draft": dev }]} data-draft="screen">
+      <div class="placeholder__frame" role="img" aria-label={`Image placeholder: ${label}`}>
+        <span class="placeholder__tag" aria-hidden="true">Screen</span>
+        <span class="placeholder__label">{label}</span>
+      </div>
+    </figure>
+  )
+}

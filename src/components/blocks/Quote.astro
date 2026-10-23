@@ -1,0 +1,20 @@
+---
+/** Pull quote with attribution, e.g. from user research or a stakeholder. */
+interface Props {
+  author?: string;
+  role?: string;
+}
+const { author, role } = Astro.props;
+---
+
+<figure class="block quote">
+  <blockquote><slot /></blockquote>
+  {
+    author && (
+      <figcaption>
+        <span class="quote__author">{author}</span>
+        {role && <span class="quote__role">{role}</span>}
+      </figcaption>
+    )
+  }
+</figure>

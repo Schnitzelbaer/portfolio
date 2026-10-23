@@ -1,0 +1,12 @@
+---
+/** A key design decision. Rendered as "Decision: <title>" followed by the reasoning. */
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<aside class="block decision" aria-label={`Decision: ${title}`}>
+  <p class="decision__title"><span class="decision__label">Decision:</span> {title}</p>
+  <div class="decision__body"><slot /></div>
+</aside>

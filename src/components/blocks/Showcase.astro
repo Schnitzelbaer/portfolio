@@ -1,0 +1,16 @@
+---
+/**
+ * Embeds a code-based tour animation from `showcases/<id>/`.
+ * Phase (c) adds the tour runtime; until then the static fallback frame is shown.
+ */
+interface Props {
+  id: string;
+  caption?: string;
+}
+const { id, caption } = Astro.props;
+---
+
+<figure class="block showcase" data-showcase={id}>
+  <div class="showcase__frame" role="img" aria-label={`Showcase: ${caption ?? id}`}></div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

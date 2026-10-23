@@ -1,0 +1,103 @@
+---
+title: Rethinking onboarding for a digital bank
+lead: Brightvale lost almost half of its new customers before their first deposit. I led the redesign of the account opening flow, from research to launch.
+date: 2025-03-14
+author: Simon Wirth
+cover: ./cover.jpg
+coverAlt: Phone mockup showing the redesigned Brightvale account opening screen
+locked: false
+outcome: Cut onboarding drop-off by 31% in the first quarter after launch.
+order: 1
+keyFacts:
+  role: Lead UX/UI Designer
+  client: Brightvale Bank (fictional)
+  team: 1 PM, 4 engineers, 1 compliance lead
+  status: Launched 2025
+---
+
+## The problem
+
+Brightvale is a mid-sized digital bank. Its account opening flow had grown over five years of regulatory changes: 14 screens, three identity checks and a funding step that many people never reached. Only 54% of the people who started the flow made a first deposit.
+
+<Callout icon="💡" title="Why it mattered">
+  Every abandoned onboarding cost Brightvale roughly CHF 90 in marketing spend. The flow was the single biggest lever on growth.
+</Callout>
+
+## Research
+
+I combined funnel analytics with twelve moderated sessions and a diary study with recent sign-ups. Three patterns came up again and again: people did not know how long the process would take, the identity check felt like a dead end when it failed, and the funding step asked for money before showing any value.
+
+<Quote author="Participant 7" role="Diary study, week 1">
+  I gave up at the ID photo. It kept saying "try again" but never told me what was wrong.
+</Quote>
+
+![Journey map with the three main drop-off points highlighted](./images/journey-map.jpg "Journey map of the original flow. The three drop-off points account for 80% of abandonment.")
+
+<Decision title="Show the whole path up front">
+  People abandoned because they could not see the end. Instead of hiding steps behind a progress bar, the new flow opens with a short overview of all six steps and how long each takes. Compliance agreed because nothing about the required data changed, only the order and framing.
+</Decision>
+
+## Design
+
+<Compare kind="before-after" caption="Fourteen screens became six. Steps that never needed user input moved to the background.">
+  <Variant label="Before" src="./images/flow-before.jpg" alt="Original onboarding flow with a long progress bar" />
+  <Variant label="After" src="./images/flow-after.jpg" alt="Redesigned flow with a six-step overview" />
+</Compare>
+
+The identity check was the hardest part. The vendor's SDK returned generic errors, so we built a small translation layer that maps each failure to a specific, fixable instruction.
+
+<FigureGroup caption="Identity check with specific recovery hints, and the reframed funding step.">
+  <Figure src="./images/id-check.jpg" alt="Identity check screen with a hint about glare on the ID card" />
+  <Figure src="./images/funding.jpg" alt="Funding step showing the account benefits before asking for a deposit" />
+</FigureGroup>
+
+<Decision title="Test the overview against a checklist">
+  We were not sure whether people preferred a visual overview or a checklist they could tick off. An A/B test with 4,000 new sign-ups settled it: the checklist performed better on small screens, the overview on larger ones. We shipped both, by breakpoint.
+</Decision>
+
+<Compare kind="variants" caption="Variant B (checklist) won on small screens by 6 percentage points.">
+  <Variant label="Variant A" src="./images/variant-a.jpg" alt="Variant A with a horizontal progress bar" />
+  <Variant label="Variant B" src="./images/variant-b.jpg" alt="Variant B with a vertical checklist" />
+</Compare>
+
+<Showcase id="banking-tour" caption="Tour of the new onboarding flow." />
+
+<Columns>
+  <Column title="What we kept">
+    The legal copy, every required data field and the vendor for identity checks. Changing any of these would have restarted a six-month compliance review.
+  </Column>
+  <Column title="What we changed">
+    Order, framing and feedback. Most steps now explain why the data is needed, and every error says how to fix it.
+  </Column>
+</Columns>
+
+<Locked title="Risk scoring and fraud review">
+  This section describes how the onboarding flow hands applicants over to Brightvale's internal risk scoring, including the thresholds for manual review and the internal tooling the fraud team uses to approve or reject applications within four hours.
+
+  ![Diagram of the internal risk scoring pipeline](./images/risk-model.jpg "Internal risk scoring pipeline.")
+</Locked>
+
+## Outcome
+
+<Outcome type="achieved">
+  - Drop-off before the first deposit fell from 46% to 32%.
+  - Median time to open an account went from 19 to 8 minutes.
+  - Support tickets about identity checks halved.
+</Outcome>
+
+<Outcome type="expected">
+  - Lower acquisition cost per funded account once marketing budgets are rebalanced.
+  - Reuse of the error translation layer in the business account flow.
+</Outcome>
+
+![Account home after onboarding](./images/dashboard.jpg "Account home, the first screen after a successful deposit.")
+
+<Toggle summary="Methods and sample sizes">
+  Funnel analysis over 90 days (38,000 starts), 12 moderated sessions, a 2-week diary study with 9 participants and one A/B test with 4,000 sign-ups.
+</Toggle>
+
+<Reflection>
+  - Involving compliance in the first workshop saved months later. They became co-authors of the solution instead of reviewers.
+  - I would test the error messages earlier. They had more impact than any visual change.
+  - Shipping two variants by breakpoint added complexity we now have to maintain.
+</Reflection>

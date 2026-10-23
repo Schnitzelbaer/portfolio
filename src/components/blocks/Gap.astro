@@ -1,0 +1,6 @@
+---
+/** Open spot written as `[...]` in Notion (a missing number or learning). Highlighted in dev. */
+const dev = import.meta.env.DEV;
+---
+
+<mark class:list={["gap", { "is-draft": dev }]} data-draft="gap" title={dev ? "Open placeholder" : undefined}>[…]</mark>

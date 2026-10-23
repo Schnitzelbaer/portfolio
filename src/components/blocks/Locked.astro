@@ -1,0 +1,15 @@
+---
+/**
+ * Section that is only visible after entering the password.
+ * Its content is never rendered into public output. Phase (e) adds the server-side unlock.
+ */
+interface Props {
+  title?: string;
+}
+const { title = "Protected section" } = Astro.props;
+---
+
+<section class="block locked" aria-label={title}>
+  <p class="locked__title">{title}</p>
+  <p class="locked__note">This part of the case study is password protected.</p>
+</section>

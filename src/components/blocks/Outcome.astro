@@ -1,0 +1,15 @@
+---
+/** Results of the project: what was achieved, or what is expected. */
+interface Props {
+  type: "achieved" | "expected";
+  title?: string;
+}
+const { type, title } = Astro.props;
+const label = type === "achieved" ? "Achieved" : "Expected";
+---
+
+<section class="block outcome" data-type={type} aria-label={title ?? label}>
+  <p class="outcome__label">{label}</p>
+  {title && <p class="outcome__title">{title}</p>}
+  <div class="outcome__body"><slot /></div>
+</section>

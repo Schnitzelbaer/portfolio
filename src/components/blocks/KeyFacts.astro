@@ -1,0 +1,27 @@
+---
+/** Role, client, team and status from the case study frontmatter. */
+interface Props {
+  role: string;
+  client: string;
+  team: string;
+  status: string;
+}
+const { role, client, team, status } = Astro.props;
+const facts = [
+  ["Role", role],
+  ["Client", client],
+  ["Team", team],
+  ["Status", status],
+] as const;
+---
+
+<dl class="key-facts">
+  {
+    facts.map(([term, value]) => (
+      <div class="key-facts__row">
+        <dt>{term}</dt>
+        <dd>{value}</dd>
+      </div>
+    ))
+  }
+</dl>

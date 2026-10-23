@@ -1,0 +1,13 @@
+---
+/** Before/after or variant comparison. Children are `<Variant>` elements. */
+interface Props {
+  kind?: "before-after" | "variants";
+  caption?: string;
+}
+const { kind = "before-after", caption } = Astro.props;
+---
+
+<figure class="block compare" data-kind={kind}>
+  <div class="compare__items"><slot /></div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

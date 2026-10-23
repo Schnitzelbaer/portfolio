@@ -1,0 +1,15 @@
+# Global site content. Edit freely; validated by src/lib/site.ts.
+name: Simon Wirth
+role: UI/UX Designer
+location: Zurich, CH
+timezone: Europe/Zurich
+email: hello@example.com
+links:
+  - label: LinkedIn
+    href: https://www.linkedin.com/
+work:
+  label: Selected work
+  intro: >-
+    UI/UX designer with more than 5 years of experience shaping digital products at the
+    intersection of strategy, design and technology. I translate complex topics into intuitive
+    experiences.

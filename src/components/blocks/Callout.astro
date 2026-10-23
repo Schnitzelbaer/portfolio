@@ -1,0 +1,16 @@
+---
+/** Highlighted note. Notion callouts map to this component. */
+interface Props {
+  icon?: string;
+  title?: string;
+}
+const { icon, title } = Astro.props;
+---
+
+<aside class="block callout">
+  {icon && <span class="callout__icon" aria-hidden="true">{icon}</span>}
+  <div class="callout__body">
+    {title && <p class="callout__title">{title}</p>}
+    <slot />
+  </div>
+</aside>

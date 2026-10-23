@@ -1,0 +1,57 @@
+/* Phase (a): structural baseline only. Design tokens and the real look follow in phase (b). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0 auto;
+  max-width: 44rem;
+  padding: 2rem 1rem;
+  font:
+    18px / 1.6 system-ui,
+    sans-serif;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 1rem;
+}
+.block {
+  margin: 2rem 0;
+}
+.compare__items,
+.figure-group__items,
+.columns {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+.decision,
+.callout,
+.outcome,
+.reflection,
+.locked {
+  border: 1px solid currentColor;
+  padding: 1rem;
+}
+.locked-media,
+.showcase__frame,
+.placeholder__frame {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  border: 1px dashed currentColor;
+}
+.is-draft {
+  outline: 3px dashed #c2410c;
+  background: #fff7ed;
+  color: #7c2d12;
+}

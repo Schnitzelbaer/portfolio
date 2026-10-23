@@ -11,7 +11,11 @@ interface Props {
   description?: string | undefined;
   noindex?: boolean;
   current?: "work" | "about" | undefined;
-  agentHref?: string | undefined;
+  /** Target of the "For agents" switch; defaults to the agent view of this page. */
+  agentHref?: string | false;
+  agentActive?: boolean;
+  /** Path of the Markdown alternate (rel=alternate); defaults to `<path>.md`. */
+  markdown?: string | false;
   /** Absolute URL of the Open Graph image. */
   ogImage?: string | undefined;
   /** Cookieless Vercel Web Analytics (production only). */
@@ -23,9 +27,15 @@ const {
   noindex = false,
   current,
   agentHref,
+  agentActive = false,
+  markdown,
   ogImage,
   analytics = site.analytics,
 } = Astro.props;
+// Path as seen on the visitor's host (variant pages are prerendered under /v/<id>/).
+const logicalPath = Astro.url.pathname.replace(/^\/v\/[^/]+(?=\/|$)/, "").replace(/\/$/, "") || "/";
+const agentLink = agentHref === false ? undefined : (agentHref ?? `/agent${logicalPath === "/" ? "" : logicalPath}`);
+const markdownLink = markdown === false ? undefined : (markdown ?? `${logicalPath === "/" ? "/index" : logicalPath}.md`);
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
 const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
@@ -44,6 +54,8 @@ const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.sit
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
+    {markdownLink && <link rel="alternate" type="text/markdown" href={markdownLink} title="Markdown version for agents" />}
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
@@ -75,6 +87,6 @@ const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.sit
     <main id="main">
       <slot />
     </main>
-    <Footer agentHref={agentHref} />
+    <Footer agentHref={agentLink} agentActive={agentActive} />
   </body>
 </html>

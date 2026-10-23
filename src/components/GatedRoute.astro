@@ -29,7 +29,7 @@ const showBody = page ? !page.entry.data.locked || unlocked : false;
       <UnlockForm slot="gate" />
     </CaseStudyView>
   ) : (
-    <Base title="Not found" noindex>
+    <Base title="Not found" noindex agentHref={false} markdown={false}>
       <NotFound />
     </Base>
   )

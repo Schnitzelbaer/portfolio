@@ -1,5 +1,7 @@
 ---
 import GatedRoute from "../../components/GatedRoute.astro";
+import { markdownResponse } from "../../lib/agent/markdown";
+import { caseStudyDocument, wantsMarkdown } from "../../lib/agent/pages";
 import { resolveGatedPage } from "../../lib/gate";
 
 /**
@@ -10,6 +12,15 @@ import { resolveGatedPage } from "../../lib/gate";
 export const prerender = false;
 
 const page = await resolveGatedPage(Astro.params.gated, Astro.locals.variant);
+// Markdown for `.md` URLs, `Accept: text/markdown` and known AI agents (same gate applies).
+if (page && (page.markdownPath || wantsMarkdown(Astro.request))) {
+  const response = markdownResponse(caseStudyDocument(page.entry, page.context, Astro.locals.unlocked === true), {
+    private: true,
+  });
+  response.headers.set("Vary", "Accept, User-Agent");
+  if (page.context.noindex || page.entry.data.locked) response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
 ---
 
 <GatedRoute page={page} />

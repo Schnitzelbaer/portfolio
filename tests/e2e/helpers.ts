@@ -145,7 +145,12 @@ export function lockedSlugs(): { locked: string[]; withLockedSection: string[] }
   return { locked, withLockedSection };
 }
 
-export function variants(): Array<{ id: string; projects: string[]; intro?: string }> {
+export function variants(): Array<{
+  id: string;
+  company: string;
+  projects: string[];
+  intro?: string;
+}> {
   const dir = join(root, "content", "variants");
   if (!existsSync(dir)) return [];
   return readdirSync(dir)

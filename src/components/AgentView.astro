@@ -1,0 +1,85 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "./Icon.astro";
+import SectionLabel from "./SectionLabel.astro";
+
+/**
+ * Agent-friendly version of a page: the Markdown that agents receive, shown as is.
+ * Placeholder presentation; Simon will specify look and content later.
+ */
+interface Props {
+  title: string;
+  markdown: string;
+  /** Path of the regular page, e.g. `/work/demo`. */
+  path: string;
+  noindex: boolean;
+}
+const { title, markdown, path, noindex } = Astro.props;
+const mdPath = `${path === "/" ? "/index" : path}.md`;
+---
+
+<Base title={`${title} (agent version)`} noindex agentHref={path} agentActive markdown={mdPath}>
+  <div class="agent wide">
+    <div class="agent__bar">
+      <SectionLabel as="h1">Agent version</SectionLabel>
+      <nav class="agent__links mono" aria-label="Agent formats">
+        <a href={mdPath}>Markdown <Icon name="arrowUpRight" size={12} /></a>
+        <a href="/llms.txt">llms.txt <Icon name="arrowUpRight" size={12} /></a>
+      </nav>
+    </div>
+    <p class="agent__note">
+      This is what AI agents receive for this page. They get it automatically with <code>Accept: text/markdown</code>,
+      through <code>llms.txt</code> or by appending <code>.md</code> to any URL.
+    </p>
+    <pre class="agent__doc" tabindex="0" aria-label="Markdown source">{markdown}</pre>
+  </div>
+  {noindex && <meta name="robots" content="noindex, nofollow" slot="head" />}
+</Base>
+
+<style>
+  .agent {
+    padding-top: 3.75rem;
+  }
+  .agent__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .agent__links {
+    display: flex;
+    gap: 1rem;
+  }
+  .agent__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .agent__links a:hover {
+    color: var(--text);
+  }
+  .agent__note {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: var(--text-ui);
+  }
+  .agent__note code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--text);
+  }
+  .agent__doc {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    box-shadow: 0 0 0 1px var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+</style>

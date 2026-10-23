@@ -1,0 +1,20 @@
+---
+import AgentView from "../../../../components/AgentView.astro";
+import { agentViewPaths } from "../../../../lib/agent/views";
+import { pageContext } from "../../../../lib/page";
+import { getVariants } from "../../../../lib/variants";
+
+export async function getStaticPaths() {
+  const all = [];
+  for (const variant of await getVariants()) {
+    for (const entry of await agentViewPaths(pageContext(variant), variant)) {
+      all.push({ params: { ...entry.params, variant: variant.id }, props: entry.props });
+    }
+  }
+  return all;
+}
+
+const { title, markdown, path } = Astro.props;
+---
+
+<AgentView title={title} markdown={markdown} path={path} noindex />

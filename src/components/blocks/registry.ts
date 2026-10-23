@@ -7,6 +7,7 @@ import Figure from "./Figure.astro";
 import FigureGroup from "./FigureGroup.astro";
 import Gap from "./Gap.astro";
 import Locked from "./Locked.astro";
+import type { BlockName } from "./names";
 import Outcome from "./Outcome.astro";
 import Placeholder from "./Placeholder.astro";
 import Quote from "./Quote.astro";
@@ -17,8 +18,8 @@ import Variant from "./Variant.astro";
 
 /**
  * Every component that case studies may use in MDX, by tag name.
- * Pass to `<Content components={blocks} />`. The agent version (phase f) adds a Markdown
- * serializer per entry; a unit test keeps both lists in sync.
+ * Pass to `<Content components={blocks} />`. Each block also needs a Markdown serializer in
+ * `src/lib/agent/markdown.ts`; `satisfies` makes the type checker enforce both lists.
  */
 export const blocks = {
   Callout,
@@ -37,7 +38,4 @@ export const blocks = {
   Showcase,
   Toggle,
   Variant,
-};
-
-export type BlockName = keyof typeof blocks;
-export const BLOCK_NAMES = Object.keys(blocks) as BlockName[];
+} satisfies Record<BlockName, unknown>;

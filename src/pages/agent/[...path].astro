@@ -1,0 +1,13 @@
+---
+import AgentView from "../../components/AgentView.astro";
+import { agentViewPaths } from "../../lib/agent/views";
+import { pageContext } from "../../lib/page";
+
+export async function getStaticPaths() {
+  return agentViewPaths(pageContext(), undefined);
+}
+
+const { title, markdown, path } = Astro.props;
+---
+
+<AgentView title={title} markdown={markdown} path={path} noindex={false} />

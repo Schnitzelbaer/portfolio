@@ -20,7 +20,7 @@ import { stringify as toYaml } from "yaml";
  * - toggle with summary "Reflection"     → <Reflection>
  * - any other toggle                     → <Toggle summary="…">
  * - images                               → copied to ./images/, become <Figure>s in the build
- * `[Screen: …]` and `[...]` stay as they are; the content pipeline turns them into placeholders.
+ * `[Screen: …]` and other bracketed notes (`[...]`, `[1890]`) stay as they are; the content pipeline turns them into placeholders.
  */
 
 export interface NotionImage {
@@ -329,7 +329,7 @@ export function convertNotionMarkdown(
     .stringify(root as Root & { children: (BlockContent | RootContent)[] });
 
   // remark-stringify escapes "[" defensively; placeholders are safe in MDX, keep them readable.
-  const readable = body.replace(/\\\[(Screen:[^\]\n]*|\.\.\.|…)\]/g, "[$1]");
+  const readable = body.replace(/\\\[([^\]\n]*)\](?![([:])/g, "[$1]");
 
   // YAML would quote "[...]" itself; keep the marker visible for the draft check.
   const yaml = toYaml(frontmatter, { lineWidth: 0 }).replace(/'\[\.\.\.\]'/g, '"[...]"');

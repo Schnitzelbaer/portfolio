@@ -1,15 +1,25 @@
 ---
-/** Open spot written as `[...]` in Notion (a missing number or learning). Highlighted in dev. */
+import { isEmptyGap } from "../../lib/content/placeholders";
+
+/**
+ * Open spot from the Notion convention: `[...]` or a bracketed note such as a provisional value
+ * (`[1890]`) or a reminder. Highlighted in dev; production builds of variants fail while any remain.
+ */
+interface Props {
+  note?: string;
+}
+const { note = "..." } = Astro.props;
 const dev = import.meta.env.DEV;
+const text = isEmptyGap(note) ? "[…]" : `[${note}]`;
 ---
 
 {
   dev ? (
     <mark class="gap" data-draft="gap" title="Open placeholder">
-      […]
+      {text}
     </mark>
   ) : (
-    <span class="gap-plain">[…]</span>
+    <span class="gap-plain">{text}</span>
   )
 }
 

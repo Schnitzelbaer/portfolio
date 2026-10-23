@@ -6,7 +6,8 @@ import { SCREEN_PATTERN, tokenizePlaceholders } from "./placeholders";
 /**
  * Turns the Notion placeholder convention into components:
  * a paragraph that is only `[Screen: …]` becomes a block `<Placeholder>`,
- * inline `[Screen: …]` and `[...]` become inline `<Placeholder>` / `<Gap>`.
+ * inline `[Screen: …]` and other bracketed notes (`[...]`, `[1890]`) become inline
+ * `<Placeholder>` / `<Gap note="…">`.
  */
 export function remarkPlaceholders() {
   return (tree: Root) => {
@@ -33,7 +34,7 @@ export function remarkPlaceholders() {
             stringAttr("label", token.value),
             expressionAttr("inline", "true"),
           ]);
-        return jsxText("Gap");
+        return jsxText("Gap", [stringAttr("note", token.value)]);
       });
       (parent.children as PhrasingContent[]).splice(index, 1, ...replacement);
       return [SKIP, index + replacement.length];

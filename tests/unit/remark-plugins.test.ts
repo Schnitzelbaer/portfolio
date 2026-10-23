@@ -28,7 +28,7 @@ describe("remarkPlaceholders", () => {
 
   it("turns inline tokens into components", () => {
     const out = run("Grew by [...] after [Screen: chart] launch.");
-    expect(out).toContain("<Gap />");
+    expect(out).toContain('<Gap note="..." />');
     expect(out).toContain('<Placeholder label="chart" inline={true} />');
   });
 });

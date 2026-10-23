@@ -17,14 +17,21 @@ describe("findPlaceholders", () => {
     ]);
   });
 
-  it("ignores fenced code blocks and ordinary brackets", () => {
+  it("ignores code, links, references, images and task boxes", () => {
     const source = [
       "```md",
       "[Screen: example]",
       "```",
-      "A [link](https://example.com) and [note].",
+      "A [link](https://example.com), a [ref][1], ![img](./a.png), `[code]`.",
+      "- [ ] task",
+      "[1]: https://example.com",
     ].join("\n");
     expect(findPlaceholders(source)).toEqual([]);
+  });
+
+  it("treats bracketed notes as open spots", () => {
+    const hits = findPlaceholders("Since [1890], about [100'000+] files. [Add your learning]");
+    expect(hits.map((h) => h.text)).toEqual(["[1890]", "[100'000+]", "[Add your learning]"]);
   });
 });
 
@@ -32,7 +39,7 @@ describe("tokenizePlaceholders", () => {
   it("splits text around tokens", () => {
     expect(tokenizePlaceholders("Up [...] by [Screen: chart]!")).toEqual([
       { type: "text", value: "Up " },
-      { type: "gap", value: "[...]" },
+      { type: "gap", value: "..." },
       { type: "text", value: " by " },
       { type: "screen", value: "chart" },
       { type: "text", value: "!" },

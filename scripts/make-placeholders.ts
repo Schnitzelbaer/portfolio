@@ -19,6 +19,7 @@ interface Spec {
 }
 
 const projects: Record<string, Spec[]> = {
+  "swissgeol-assets": [{ file: "cover.jpg", label: "swissgeol assets", kind: "desktop", hue: 30 }],
   "ledger-onboarding": [
     { file: "cover.jpg", label: "Brightvale onboarding", kind: "cover", hue: 152 },
     { file: "images/flow-before.jpg", label: "Onboarding v1 · 14 steps", kind: "mobile", hue: 10 },

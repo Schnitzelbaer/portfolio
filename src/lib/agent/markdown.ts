@@ -8,7 +8,7 @@ import remarkStringify from "remark-stringify";
 import { unified } from "unified";
 import { SKIP, visit } from "unist-util-visit";
 import type { BlockName } from "../../components/blocks/names";
-import { tokenizePlaceholders } from "../content/placeholders";
+import { isEmptyGap, tokenizePlaceholders } from "../content/placeholders";
 
 /**
  * Agent-friendly Markdown, generated from the same MDX source as the HTML pages.
@@ -136,7 +136,10 @@ const serializers: Record<BlockName, Serializer> = {
     const value = text(`[Image placeholder: ${attr(node, "label") ?? ""}]`);
     return isInline(node) ? [value] : [paragraph(value)];
   },
-  Gap: () => [text("[…]")],
+  Gap: (node) => {
+    const note = attr(node, "note") ?? "...";
+    return [text(isEmptyGap(note) ? "[…]" : `[${note}]`)];
+  },
 };
 
 export const SERIALIZED_BLOCKS = Object.keys(serializers) as BlockName[];
@@ -181,7 +184,9 @@ function replacePlaceholders(tree: Root) {
         t.type === "screen"
           ? `[Image placeholder: ${t.value}]`
           : t.type === "gap"
-            ? "[…]"
+            ? isEmptyGap(t.value)
+              ? "[…]"
+              : `[${t.value}]`
             : t.value,
       )
       .join("");

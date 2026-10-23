@@ -1,0 +1,93 @@
+---
+title: Opening up decades of geological data
+lead: AI-assisted extraction describes the content of 100,000+ geological files in the Swiss federal archive. This takes work off the data curators who maintain the archive and use it themselves, and makes the content visible to them.
+date: 2026-10-16
+author: Simon Wirth
+cover: ./cover.jpg
+coverAlt: Placeholder cover for swissgeol assets
+locked: false
+outcome: Made the content of archive files describable and visible at a glance for the curators who maintain them.
+order: 0
+keyFacts:
+  role: Solo UX designer (part-time)
+  client: swisstopo
+  team: 2 full-stack developers, 2 subject matter experts
+  status: Classification and detail view live, search in development
+---
+
+## Context
+
+swissgeol assets is swisstopo's map-based archive for geological documents of national importance, from [1890] to today. Each asset covers a geographic area and contains one or more files, such as borehole profiles, geological maps, seismic measurements, lab analyses and reports.
+
+For now, the application is designed for around ten data curators. They maintain the federal archive and use it themselves at the same time. More cantons are gradually feeding in their archives. Read access is open to the public, but only a small selection of assets is available so far, and it is not actively promoted yet. In the medium term, the archive should also serve engineers, planners and researchers looking for information about the Swiss subsurface.
+
+## The problem
+
+The content of the files was not described anywhere, so files could not be found by what they contain.
+
+**Data curators:** The archive holds more than [100,000] files, many of them decades old. Describing each file by hand was not feasible because the effort could not be justified financially. Files could only be identified by technical names like `a56_55_LDoc_20251209_…`, even though a single file can contain several content types, for example a hydrogeological report, maps, diagrams and borehole profiles in different languages. Anyone who wanted to know what a file contained had to open it and look through it. As more cantons feed in their archives, this effort would keep growing.
+
+**The task:** make the content describable without curators going through every file by hand, and make it visible to them at a glance.
+
+## Approach
+
+The project had two steps. First, I redesigned the classification process for data curators around an AI-assisted extraction. For each file, the AI records format, size, page count, language and the content types it contains, with their page ranges. This data then made the new asset detail view and the advanced search possible.
+
+The user base is small: around ten data curators, two of whom were directly involved in the design process. Classic user research would have added little here. Instead, I worked in close co-creation with these two experts and tested drafts with them continuously.
+
+## Extraction and classification for data curators
+
+Newly uploaded files are extracted automatically. For existing files, data curators start the extraction manually in the edit view. They correct wrong classifications in the same view.
+
+[Screen: Edit view with the extraction trigger and category correction]
+
+<Decision title="Collapsed by default">
+  The first version of the classification view was overloaded when tables of contents were long. Now the items are collapsed by default: you see right away which files exist, and you expand only what you want to edit.
+</Decision>
+
+[Screen: Variant 1 vs. final]
+
+## Asset detail view
+
+The previous detail view listed the asset's information without a clear structure, and files only appeared with their file names. Based on the extracted data, each file now shows its content at a glance. An expandable table of contents lists the content types with page ranges and languages. A click opens the file in a full-screen viewer on the right page, and the table of contents stays available for navigation. The curators use this view themselves, and it is also what the public sees with read access.
+
+[Screen: File card before and after]
+
+[Screen: Expanded table of contents]
+
+[Screen: Full-screen viewer]
+
+<Decision title="Group the table of contents by type, not by page">
+  At first, the detected content blocks were sorted by page number, in the order they appear in the document. Our conversations revealed a different use case: you have a place in mind and want to know which borehole profiles exist there. So the blocks are now grouped by content type, and the page ranges stay visible as a navigation aid.
+</Decision>
+
+<Decision title="Documents before metadata">
+  Originally, the asset's metadata came first. The experts wanted to see the documents first. Metadata is read in a second step and matters mostly for filtering and search. So the documents come first.
+</Decision>
+
+## Outlook: advanced search
+
+The search is still in development, so there is no usage data yet. The extracted content types and languages will be available as search filters, so files can be found by their content instead of their file name. A full-text search in the document content and a polygon selection on the map complete it.
+
+[Screen: Filter panel with result counts]
+
+[Screen: Polygon selection on the map]
+
+## Outcome
+
+<Outcome type="achieved">
+  Classification and the detail view are live. Data curators can now describe the content of the archive: newly uploaded files are processed automatically, existing ones on demand. [Number of files processed so far] In the detail view, you see what a file contains before opening it, and you can jump straight to the relevant pages.
+</Outcome>
+
+<Outcome type="expected">
+  Once the search is live, files can be found by their content. As more cantons feed in their archives and access opens up step by step, the structured data will make historical information about the Swiss subsurface more accessible to authorities, planners and researchers, for example for construction projects, infrastructure planning and research.
+</Outcome>
+
+[Add figures: files processed, extraction accuracy, feedback from the curators]
+
+<Reflection>
+  - **A small user base needs a different method.** With around ten data curators as the user group, I worked in co-creation with two involved experts instead of doing classic research. The decisions rest on two perspectives. A broader validation is still open.
+  - **No baseline.** Because the content had not been described before, there was no existing process to compare against. So I measure success by what the product makes possible, not by time saved: [Add the criterion].
+  - **Open issue: trust in the AI.** There are currently no confidence indicators, and after a correction you cannot tell that it happened. One option would be to show where the AI was uncertain and what a person changed.
+  - [Your learning]
+</Reflection>

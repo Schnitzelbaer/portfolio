@@ -157,7 +157,11 @@ export function variants(): Array<{
     .filter((f) => /\.ya?ml$/.test(f))
     .map((f) => ({
       id: f.replace(/\.ya?ml$/, ""),
-      ...(parseYaml(readFileSync(join(dir, f), "utf8")) as { projects: string[] }),
+      ...(parseYaml(readFileSync(join(dir, f), "utf8")) as {
+        company: string;
+        projects: string[];
+        intro?: string;
+      }),
     }));
 }
 

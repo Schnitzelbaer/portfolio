@@ -1,20 +1,38 @@
 ---
+import { IMAGE_FORMATS, privateManifest } from "../../lib/private-assets";
 import Icon from "../Icon.astro";
 
 /**
- * Stand-in for an image that lives behind the password gate.
- * Phase (e) swaps this for the gated `/_private` image when the visitor is unlocked.
+ * Image that lives behind the password gate. For unlocked visitors it renders a responsive
+ * picture served by `/protected/img/*`; otherwise a neutral stand-in. The original file is never
+ * part of the public build.
  */
 interface Props {
   id: string;
   alt: string;
+  sizes?: string;
 }
-const { alt } = Astro.props;
+const { id, alt, sizes = "(min-width: 560px) 496px, calc(100vw - 48px)" } = Astro.props;
+const image = Astro.locals.unlocked ? privateManifest().images[id] : undefined;
+const srcset = (format: string) =>
+  image?.widths.map((w) => `/protected/img/${id}-${w}.${format} ${w}w`).join(", ") ?? "";
+const fallbackWidth = image?.widths.find((w) => w >= 800) ?? image?.widths.at(-1);
 ---
 
-<div class="locked-media" role="img" aria-label={`Protected image: ${alt}`}>
-  <Icon name="lock" size={18} />
-</div>
+{
+  image ? (
+    <picture>
+      {IMAGE_FORMATS.map((format) => (
+        <source type={`image/${format}`} srcset={srcset(format)} sizes={sizes} />
+      ))}
+      <img src={`/protected/img/${id}-${fallbackWidth}.webp`} alt={alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+    </picture>
+  ) : (
+    <div class="locked-media" role="img" aria-label={`Protected image: ${alt}`}>
+      <Icon name="lock" size={18} />
+    </div>
+  )
+}
 
 <style>
   .locked-media {

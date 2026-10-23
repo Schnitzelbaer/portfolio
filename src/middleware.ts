@@ -1,6 +1,7 @@
 import { SITE_DOMAIN } from "astro:env/server";
 import { defineMiddleware } from "astro:middleware";
 import siteYaml from "../content/site.yaml?raw";
+import { isUnlocked } from "./lib/auth/runtime";
 import { variantFromHost } from "./lib/routing/host";
 import { routingInput } from "./lib/routing/input";
 import { interpret } from "./lib/routing/interpret";
@@ -25,6 +26,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     SITE_DOMAIN,
     variants.map((v) => v.id),
   );
+  context.locals.unlocked = context.isPrerendered ? false : await isUnlocked(context.cookies);
 
   if (!import.meta.env.DEV) return next();
 

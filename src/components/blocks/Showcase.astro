@@ -19,7 +19,7 @@ if (!showcase) {
 const { config, locked } = showcase;
 const unlocked = Boolean((Astro.locals as { unlocked?: boolean }).unlocked);
 const available = !locked || unlocked;
-const privateBase = locked && unlocked ? `/_private/showcases/${id}/` : undefined;
+const privateBase = locked && unlocked ? `/protected/showcases/${id}/` : undefined;
 
 // Aspect ratio per variant, so the frame never shifts when the prototype loads.
 const scope = `[data-showcase-id="${id}"] .showcase__stage`;

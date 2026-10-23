@@ -41,7 +41,7 @@ export interface RoutingInput {
 }
 
 /** Path prefixes that are shared by all hosts and never rewritten. */
-export const PASSTHROUGH = ["_astro", "_private", "_image", "api", "_vercel", "_server-islands"];
+export const PASSTHROUGH = ["_astro", "protected", "_image", "api", "_vercel", "_server-islands"];
 export const VARIANT_PREFIX = "/v";
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

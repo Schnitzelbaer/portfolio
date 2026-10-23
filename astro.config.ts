@@ -1,3 +1,5 @@
+import { existsSync, readdirSync } from "node:fs";
+import { join, relative } from "node:path";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import vercel from "@astrojs/vercel";
@@ -7,12 +9,21 @@ import { remarkBlockImages } from "./src/lib/content/remark-block-images";
 import { remarkPlaceholders } from "./src/lib/content/remark-placeholders";
 import { siteUrl } from "./src/lib/domain";
 
+/** Files built by scripts/build-private.ts; bundled only into the server function. */
+function privateFiles(dir = "private"): string[] {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    return entry.isDirectory() ? privateFiles(path) : [`./${relative(".", path)}`];
+  });
+}
+
 export default defineConfig({
   site: siteUrl(process.env.SITE_DOMAIN),
   trailingSlash: "never",
   devToolbar: { enabled: false },
   build: { format: "file" },
-  adapter: vercel(),
+  adapter: vercel({ includeFiles: privateFiles() }),
   integrations: [mdx(), draftGate()],
   markdown: {
     processor: unified({
@@ -26,6 +37,10 @@ export default defineConfig({
         access: "public",
         default: "portfolio.localhost",
       }),
+      // Hash of the case study password (npm run password:hash). Never the password itself.
+      LOCK_PASSWORD_HASH: envField.string({ context: "server", access: "secret", optional: true }),
+      // Random secret that signs the unlock cookie.
+      LOCK_COOKIE_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
 });

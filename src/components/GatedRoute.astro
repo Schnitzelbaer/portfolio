@@ -3,11 +3,12 @@ import Base from "../layouts/Base.astro";
 import type { GatedPage } from "../lib/gate";
 import CaseStudyView from "./CaseStudyView.astro";
 import NotFound from "./NotFound.astro";
+import UnlockForm from "./UnlockForm.astro";
 
 /**
- * On-demand case study behind the password gate. Phase (e) adds the unlock form and renders
- * the body once the visitor is unlocked. Renders a 404 when `page` is undefined (on-demand
- * routes cannot rewrite to the prerendered 404 page).
+ * On-demand case study behind the password gate: the public header plus the unlock form, or
+ * the full body for unlocked visitors. Renders a 404 when `page` is undefined (on-demand routes
+ * cannot rewrite to the prerendered 404 page).
  */
 interface Props {
   page: GatedPage | undefined;
@@ -18,13 +19,14 @@ if (!page) Astro.response.status = 404;
 if (!page || page.context.noindex || page.entry.data.locked) {
   Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
 }
-const showBody = page ? !page.entry.data.locked : false;
+const unlocked = Astro.locals.unlocked === true;
+const showBody = page ? !page.entry.data.locked || unlocked : false;
 ---
 
 {
   page ? (
     <CaseStudyView entry={page.entry} next={page.next} context={page.context} showBody={showBody}>
-      <p slot="gate">This case study is password protected.</p>
+      <UnlockForm slot="gate" />
     </CaseStudyView>
   ) : (
     <Base title="Not found" noindex>

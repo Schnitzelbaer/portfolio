@@ -62,7 +62,7 @@ describe("routing table", () => {
   });
 
   it("shares assets, the API and private files across hosts", () => {
-    for (const path of ["/_astro/app.js", "/api/unlock", "/_private/img/x.webp", "/favicon.svg"]) {
+    for (const path of ["/_astro/app.js", "/api/unlock", "/protected/img/x.webp", "/favicon.svg"]) {
       expect(req("acme.example.ch", path).action).toEqual({ type: "none" });
     }
   });

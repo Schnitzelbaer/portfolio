@@ -7,8 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build && tsx scripts/vercel-routes.ts",
+    "dev": "tsx scripts/build-private.ts && astro dev",
+    "build": "tsx scripts/build-private.ts && astro build && tsx scripts/vercel-routes.ts",
     "check": "astro check && biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
@@ -16,7 +16,11 @@
     "import:notion": "tsx scripts/import-notion.ts",
     "screenshots": "tsx scripts/screenshots.ts",
     "showcases:fallbacks": "tsx scripts/showcase-fallbacks.ts",
-    "variant:new": "tsx scripts/variant-new.ts"
+    "variant:new": "tsx scripts/variant-new.ts",
+    "build:private": "tsx scripts/build-private.ts",
+    "preview": "tsx scripts/preview-server.ts",
+    "password:hash": "tsx scripts/password-hash.ts",
+    "test:e2e": "SITE_DOMAIN=portfolio.localhost ROUTING_PRODUCTION=1 npm run build && playwright test"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.4",

@@ -1,53 +1,50 @@
 ---
 import Icon from "../Icon.astro";
+import UnlockForm from "../UnlockForm.astro";
 
 /**
- * Section that is only visible after entering the password.
- * Its content is never rendered into public output. Phase (e) adds the server-side unlock.
+ * Section that is only visible after entering the password. Its content is rendered only on the
+ * server for unlocked visitors; pages containing it are rendered on demand (never prerendered).
  */
 interface Props {
   title?: string;
 }
 const { title = "Protected section" } = Astro.props;
+const unlocked = Astro.locals.unlocked === true;
 ---
 
-<section class="block locked" aria-label={title}>
-  <span class="locked__icon"><Icon name="lock" size={16} /></span>
-  <div>
-    <p class="locked__title">{title}</p>
-    <p class="locked__note">This part of the case study is password protected.</p>
-  </div>
-</section>
+{
+  unlocked ? (
+    <section class="block locked-open" aria-label={title}>
+      <p class="locked-open__label mono">
+        <Icon name="unlock" size={12} />
+        {title}
+      </p>
+      <div class="locked-open__body">
+        <slot />
+      </div>
+    </section>
+  ) : (
+    <div class="block">
+      <UnlockForm title={title} anchor={false} />
+    </div>
+  )
+}
 
 <style>
-  .locked {
-    display: flex;
-    gap: 0.875rem;
-    align-items: flex-start;
-    padding: 1.125rem 1.25rem;
-    border-radius: var(--radius);
-    border: 1px dashed var(--border-strong);
-    background:
-      repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--border) 50%, transparent) 10px 11px),
-      var(--bg-elevated);
+  .locked-open {
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-strong);
   }
-  .locked__icon {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: var(--surface-strong);
-    color: var(--text);
+  .locked-open__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
-  .locked__title {
-    color: var(--text);
-    font-weight: 600;
+  .locked-open__body {
+    margin-top: 0.75rem;
   }
-  .locked__note {
-    margin-top: 0.125rem;
-    color: var(--text-muted);
-    font-size: var(--text-ui);
+  .locked-open__body > :global(* + *) {
+    margin-top: 1rem;
   }
 </style>

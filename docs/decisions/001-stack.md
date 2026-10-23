@@ -24,7 +24,7 @@ Constraints from the brief:
 - **Request-time logic:** The Vercel adapter (v11, verified in its source) only runs Astro middleware for on-demand routes, even in `middlewareMode: "edge"`. Prerendered pages get no request-time code. Therefore:
   1. Public pages, variant pages (prerendered under `/v/<id>/`), Markdown versions, `llms.txt`, OG images and the sitemap are static.
   2. A declarative routing table (`src/lib/routing/`) describes host → variant rewrites, content negotiation (`Accept: text/markdown`) and headers. A post-build step writes it into `.vercel/output/config.json` (Build Output API). The dev server and the local e2e preview server interpret the same table.
-  3. Only locked case studies, pages with locked sections, their Markdown versions, `/api/unlock` and `/_private/*` render on demand, with `Cache-Control: private, no-store`.
+  3. Only locked case studies, pages with locked sections, their Markdown versions, `/api/unlock` and `/protected/*` render on demand, with `Cache-Control: private, no-store`.
 - **Tooling:** TypeScript (strict), `astro check`, Biome (lint and format for TS/JS/JSON/CSS), Vitest, Playwright with the preinstalled Chromium, tsx for scripts.
 
 ## Alternatives considered

@@ -34,11 +34,16 @@ interface AstroFileData {
  * Public context: the path becomes a static import, so Astro optimizes it.
  * Locked context (entry with `locked: true`, or inside `<Locked>`): the path is replaced by an
  * opaque `privateId` and never imported. This keeps locked images out of the public build output
- * by construction; they are served later by the gated `/_private` endpoint.
+ * by construction; they are served later by the gated `/protected` endpoint.
  *
  * Plain Markdown images are normalized to `<Figure>` first so the same rules apply to them.
  */
-export function remarkBlockImages() {
+export interface BlockImagesOptions {
+  /** Called for every image that stays private (used by `scripts/build-private.ts`). */
+  onPrivateImage?: (image: { id: string; src: string; filePath: string }) => void;
+}
+
+export function remarkBlockImages(options: BlockImagesOptions = {}) {
   return (tree: Root, file: VFile) => {
     const slug = entrySlugFromPath(file.path ?? "");
     if (!slug) return;
@@ -61,8 +66,10 @@ export function remarkBlockImages() {
         const src = getStringAttr(node, name);
         if (!isRelativeAsset(src)) continue;
         if (locked) {
+          const id = privateImageId(slug, src);
           removeAttr(node, name);
-          setAttr(node, stringAttr("privateId", privateImageId(slug, src)));
+          setAttr(node, stringAttr("privateId", id));
+          options.onPrivateImage?.({ id, src, filePath: file.path });
           continue;
         }
         let identifier = known.get(src);

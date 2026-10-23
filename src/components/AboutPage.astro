@@ -1,0 +1,227 @@
+---
+/** About page body, shared by the main site and application variants. */
+import { getEntry, render } from "astro:content";
+import { site } from "../lib/site";
+import Clock from "./Clock.astro";
+import Icon from "./Icon.astro";
+import Leader from "./Leader.astro";
+import SectionLabel from "./SectionLabel.astro";
+
+const about = await getEntry("pages", "about");
+if (!about) throw new Error("content/pages/about.mdx is missing");
+const { Content } = await render(about);
+const { tagline, tags, experience } = about.data;
+const links = [
+  ...site.links.map((link) => ({ label: link.label, href: link.href, meta: new URL(link.href).hostname.replace(/^www\./, "") })),
+  { label: "Email", href: `mailto:${site.email}`, meta: site.email },
+];
+---
+
+
+<article class="about column">
+  <p class="about__meta mono reveal" style="--i: 0">
+    <span class="about__dot" aria-hidden="true"></span>
+    <span>{site.location}</span>
+    <Icon name="clock" size={12} />
+    <Clock timezone={site.timezone} />
+  </p>
+  <h1 class="about__name reveal" style="--i: 1">{site.name}</h1>
+  <p class="about__role reveal" style="--i: 1">{site.role}</p>
+
+  <div class="about__text reveal" style="--i: 2">
+    {tagline && <p class="about__tagline">{tagline}</p>}
+    <Content />
+  </div>
+
+  {
+    tags.length > 0 && (
+      <ul role="list" class="tags reveal" style="--i: 3" aria-label="Focus areas">
+        {tags.map((tag) => (
+          <li class="tag">{tag}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  <hr class="divider" />
+
+  <section aria-labelledby="experience" class="reveal" style="--i: 4">
+    <SectionLabel id="experience">Experience</SectionLabel>
+    <ul role="list" class="rows">
+      {
+        experience.map((job) => (
+          <Leader as="li">
+            <span class="row__title">{job.company}</span>
+            <span class="row__meta">{job.role}</span>
+            <span slot="end" class="row__dates">
+              {job.from}
+              <Icon name="arrowRight" size={12} />
+              <span class="visually-hidden">to</span>
+              {job.to}
+            </span>
+          </Leader>
+        ))
+      }
+    </ul>
+  </section>
+
+  <hr class="divider" />
+
+  <section aria-labelledby="elsewhere" class="reveal" style="--i: 5">
+    <SectionLabel id="elsewhere">Elsewhere</SectionLabel>
+    <ol role="list" class="links">
+      {
+        links.map((link, i) => (
+          <li>
+            <a href={link.href} class="link" rel={link.href.startsWith("http") ? "me noopener" : undefined}>
+              <span class="link__index mono">{String(i + 1).padStart(2, "0")}</span>
+              <span class="link__title">
+                {link.label}
+                <Icon name="arrowUpRight" size={14} />
+              </span>
+              <span class="link__meta">{link.meta}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</article>
+
+<style>
+  .about {
+    padding-top: 3.75rem;
+  }
+  .about__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .about__dot {
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
+    animation: pulse 2.4s var(--ease-out) infinite;
+  }
+  @keyframes pulse {
+    70% {
+      box-shadow: 0 0 0 6px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  .about__name {
+    margin-top: 0.875rem;
+    font-size: var(--text-xl);
+    letter-spacing: -0.02em;
+  }
+  .about__role {
+    margin-top: 0.125rem;
+    font-size: var(--text-lg);
+    color: var(--text-muted);
+    letter-spacing: -0.01em;
+  }
+  .about__text {
+    margin-top: 1.75rem;
+  }
+  .about__text :global(p) {
+    color: var(--text-muted);
+  }
+  .about__text :global(p + p) {
+    margin-top: 1rem;
+  }
+  .about__text .about__tagline {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 0.125rem;
+  }
+  .about__text .about__tagline + :global(p) {
+    margin-top: 0;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+  }
+  .tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 0 0 1px var(--border);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .rows {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.875rem;
+    font-size: var(--text-ui);
+  }
+  .row__title {
+    color: var(--text);
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+  .row__meta {
+    color: var(--text-muted);
+  }
+  .row__dates {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  @media (max-width: 40rem) {
+    .rows :global(.leader__start) {
+      display: flex;
+      flex-direction: column;
+    }
+    .rows :global(.leader) {
+      align-items: flex-end;
+    }
+    .rows :global(.leader__line) {
+      transform: translateY(-0.45em);
+    }
+  }
+  .links {
+    margin-top: 1.25rem;
+  }
+  .links li + li {
+    border-top: 1px dotted var(--border-strong);
+  }
+  .link {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    padding: 0.875rem 0;
+    row-gap: 0.125rem;
+  }
+  .link__index {
+    grid-row: span 2;
+    padding-top: 0.2rem;
+  }
+  .link__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--text-ui);
+  }
+  .link__title :global(svg) {
+    color: var(--text-muted);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+  .link:hover .link__title :global(svg) {
+    transform: translate(2px, -2px);
+    color: var(--text);
+  }
+  .link__meta {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+</style>

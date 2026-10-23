@@ -12,8 +12,20 @@ interface Props {
   noindex?: boolean;
   current?: "work" | "about" | undefined;
   agentHref?: string | undefined;
+  /** Absolute URL of the Open Graph image. */
+  ogImage?: string | undefined;
+  /** Cookieless Vercel Web Analytics (production only). */
+  analytics?: boolean;
 }
-const { title, description = site.work.intro, noindex = false, current, agentHref } = Astro.props;
+const {
+  title,
+  description = site.work.intro,
+  noindex = false,
+  current,
+  agentHref,
+  ogImage,
+  analytics = site.analytics,
+} = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
 const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
@@ -33,12 +45,27 @@ const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.sit
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
     <meta name="theme-color" content="#17161d" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f6f6f8" media="(prefers-color-scheme: light)" />
     <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <slot name="head" />
+    {
+      analytics && import.meta.env.PROD && (
+        <>
+          <script is:inline>window.va = window.va || function () {(window.vaq = window.vaq || []).push(arguments);};</script>
+          <script is:inline defer src="/_vercel/insights/script.js"></script>
+        </>
+      )
+    }
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

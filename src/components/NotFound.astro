@@ -1,0 +1,23 @@
+---
+import SectionLabel from "./SectionLabel.astro";
+---
+
+<div class="column notfound">
+  <SectionLabel as="h1">Not found</SectionLabel>
+  <p>This page does not exist (anymore). <a href="/">See all work</a>.</p>
+</div>
+
+<style>
+  .notfound {
+    padding-top: 3.75rem;
+  }
+  p {
+    margin-top: 1rem;
+    color: var(--text-muted);
+  }
+  a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import GatedRoute from "../../components/GatedRoute.astro";
+import { resolveGatedPage } from "../../lib/gate";
+
+/**
+ * Locked case studies and pages with locked sections, rendered on demand.
+ * On a variant subdomain Vercel serves this route with the original URL, so the variant comes
+ * from the Host header (resolved by the middleware).
+ */
+export const prerender = false;
+
+const page = await resolveGatedPage(Astro.params.gated, Astro.locals.variant);
+---
+
+<GatedRoute page={page} />

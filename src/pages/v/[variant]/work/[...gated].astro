@@ -1,0 +1,14 @@
+---
+import GatedRoute from "../../../../components/GatedRoute.astro";
+import { resolveGatedPage } from "../../../../lib/gate";
+
+/**
+ * Same as `src/pages/work/[...gated].astro`, reached through the subdomain rewrite. Its main job
+ * is to make Vercel route `/v/<id>/work/*` misses to the server function.
+ */
+export const prerender = false;
+
+const page = await resolveGatedPage(Astro.params.gated, Astro.params.variant);
+---
+
+<GatedRoute page={page} />

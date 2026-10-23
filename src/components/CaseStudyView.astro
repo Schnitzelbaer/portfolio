@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+import type { PageContext } from "../lib/page";
+import type { WorkEntry } from "../lib/work";
+import CaseStudy from "./CaseStudy.astro";
+
+/** Full case study page (layout + body) for the main site, variants and the gate. */
+interface Props {
+  entry: WorkEntry;
+  next: WorkEntry | undefined;
+  context: PageContext;
+  showBody: boolean;
+}
+const { entry, next, context, showBody } = Astro.props;
+const { data } = entry;
+---
+
+<Base
+  title={data.title}
+  description={data.lead}
+  noindex={context.noindex || data.locked}
+  current="work"
+  ogImage={`${context.origin}/og/work/${entry.id}.png`}
+  analytics={context.analytics}
+>
+  <CaseStudy entry={entry} next={next} showBody={showBody}>
+    <slot name="gate" slot="gate" />
+  </CaseStudy>
+</Base>

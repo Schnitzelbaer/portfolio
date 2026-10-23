@@ -1,12 +1,14 @@
 ---
 import WorkIndex from "../components/WorkIndex.astro";
 import Base from "../layouts/Base.astro";
+import { pageContext } from "../lib/page";
 import { site } from "../lib/site";
 import { getWork } from "../lib/work";
 
 const work = await getWork();
+const context = pageContext();
 ---
 
-<Base current="work">
+<Base current="work" ogImage={`${context.origin}/og.png`}>
   <WorkIndex label={site.work.label} intro={site.work.intro} entries={work} />
 </Base>

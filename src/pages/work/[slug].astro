@@ -1,14 +1,14 @@
 ---
-import CaseStudy from "../../components/CaseStudy.astro";
-import Base from "../../layouts/Base.astro";
+import CaseStudyView from "../../components/CaseStudyView.astro";
+import { isGated, nextIn, pageContext } from "../../lib/page";
 import { getWork, type WorkEntry } from "../../lib/work";
 
+/** Public case studies, prerendered. Gated ones are served by `[...gated].astro`. */
 export async function getStaticPaths() {
   const work = await getWork();
-  return work.map((entry, i) => ({
-    params: { slug: entry.id },
-    props: { entry, next: work[(i + 1) % work.length] },
-  }));
+  return work
+    .filter((entry) => !isGated(entry))
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry, next: nextIn(work, entry) } }));
 }
 
 interface Props {
@@ -16,13 +16,6 @@ interface Props {
   next: WorkEntry | undefined;
 }
 const { entry, next } = Astro.props;
-// Locked case studies never render their body into static output. Phase (e) moves them behind
-// the server-side gate.
-const showBody = !entry.data.locked;
 ---
 
-<Base title={entry.data.title} description={entry.data.lead} noindex={entry.data.locked} current="work">
-  <CaseStudy entry={entry} next={next} showBody={showBody}>
-    <p slot="gate">This case study is password protected.</p>
-  </CaseStudy>
-</Base>
+<CaseStudyView entry={entry} next={next} context={pageContext()} showBody />

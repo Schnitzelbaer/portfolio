@@ -1,0 +1,25 @@
+---
+import WorkIndex from "../../../components/WorkIndex.astro";
+import Base from "../../../layouts/Base.astro";
+import { pageContext } from "../../../lib/page";
+import { site } from "../../../lib/site";
+import { getVariants, getVariantWork } from "../../../lib/variants";
+
+export async function getStaticPaths() {
+  return (await getVariants()).map((variant) => ({ params: { variant: variant.id }, props: { variant } }));
+}
+
+const { variant } = Astro.props;
+const context = pageContext(variant);
+const work = await getVariantWork(variant);
+---
+
+<Base
+  current="work"
+  noindex={context.noindex}
+  ogImage={`${context.origin}/og.png`}
+  analytics={context.analytics}
+  description={`Selected work of ${site.name}, prepared for ${variant.company}.`}
+>
+  <WorkIndex label={site.work.label} intro={site.work.intro} greeting={variant.intro} entries={work} />
+</Base>

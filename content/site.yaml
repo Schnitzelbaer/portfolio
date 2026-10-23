@@ -13,3 +13,21 @@ work:
     UI/UX designer with more than 5 years of experience shaping digital products at the
     intersection of strategy, design and technology. I translate complex topics into intuitive
     experiences.
+
+# Cookieless Vercel Web Analytics. Each variant can switch it off with `analytics: false`.
+analytics: true
+agents:
+  # Known AI crawlers get the Markdown version by default (besides Accept: text/markdown).
+  userAgents:
+    - GPTBot
+    - ChatGPT-User
+    - OAI-SearchBot
+    - ClaudeBot
+    - Claude-User
+    - Claude-SearchBot
+    - anthropic-ai
+    - PerplexityBot
+    - Perplexity-User
+    - Google-Extended
+    - CCBot
+    - Applebot-Extended

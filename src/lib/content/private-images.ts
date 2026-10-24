@@ -31,3 +31,8 @@ export function entrySlugFromPath(filePath: string): string | undefined {
   );
   return match?.[1];
 }
+
+/** File name of a locked video in `private/media/`: opaque id plus the original extension. */
+export function privateMediaFile(entrySlug: string, relativeSrc: string): string {
+  return `${privateImageId(entrySlug, relativeSrc)}${extname(relativeSrc).toLowerCase()}`;
+}

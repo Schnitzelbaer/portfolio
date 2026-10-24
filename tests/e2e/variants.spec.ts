@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { get, PORT, variantHost, variants } from "./helpers";
+import { allSlugs, get, PORT, variantHost, variants } from "./helpers";
 
 const variant = variants()[0];
 
@@ -30,13 +30,7 @@ test.describe("application variants", () => {
   });
 
   test("hides case studies that are not part of the variant", async () => {
-    const all = [
-      "ledger-onboarding",
-      "transit-planner",
-      "care-scheduling",
-      "energy-dashboard",
-      "design-system",
-    ];
+    const all = allSlugs();
     for (const slug of all.filter((s) => !variant?.projects.includes(s))) {
       const res = await get(`/work/${slug}`, { host: variantHost(id) });
       expect(res.status, slug).toBe(404);

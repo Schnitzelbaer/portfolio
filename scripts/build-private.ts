@@ -1,11 +1,12 @@
 /**
  * Builds everything that may only be served behind the password gate into `private/`:
  * - responsive AVIF/WebP versions of images in locked entries and <Locked> sections,
- * - bundles of locked showcases (`showcases/_locked/<id>/variants/*.ts`),
+ * - copies of videos in locked entries and <Locked> sections (`private/media/`),
  * - `private/manifest.json`.
  * Runs before `astro build` and `astro dev`. The folder is gitignored and never static.
  */
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -22,7 +23,6 @@ import remarkParse from "remark-parse";
 import sharp from "sharp";
 import { unified } from "unified";
 import { VFile } from "vfile";
-import { build } from "vite";
 import { parse as parseYaml } from "yaml";
 import { remarkBlockImages } from "../src/lib/content/remark-block-images";
 import { IMAGE_FORMATS, PRIVATE_DIR, type PrivateManifest } from "../src/lib/private-assets";
@@ -39,8 +39,9 @@ function contentFiles(dir: string): string[] {
   });
 }
 
-function collectPrivateImages(): Array<{ id: string; source: string }> {
-  const found = new Map<string, string>();
+function collectPrivateAssets() {
+  const images = new Map<string, string>();
+  const media = new Map<string, string>();
   for (const filePath of contentFiles(join(root, "content"))) {
     const text = readFileSync(filePath, "utf8");
     const fm = /^---\n([\s\S]*?)\n---/.exec(text);
@@ -52,17 +53,21 @@ function collectPrivateImages(): Array<{ id: string; source: string }> {
       .use(remarkFrontmatter)
       .use(remarkGfm)
       .use(remarkBlockImages, {
-        onPrivateImage: ({ id, src }) => found.set(id, resolve(dirname(filePath), src)),
+        onPrivateImage: ({ id, src }) => images.set(id, resolve(dirname(filePath), src)),
+        onPrivateMedia: ({ file: name, src }) => media.set(name, resolve(dirname(filePath), src)),
       });
     processor.runSync(processor.parse(file), file);
   }
-  return [...found].map(([id, source]) => ({ id, source }));
+  return { images: [...images].map(([id, source]) => ({ id, source })), media: [...media] };
 }
 
-async function buildImages(manifest: PrivateManifest) {
+async function buildImages(
+  manifest: PrivateManifest,
+  assets: ReturnType<typeof collectPrivateAssets>,
+) {
   const dir = join(out, "img");
   mkdirSync(dir, { recursive: true });
-  for (const { id, source } of collectPrivateImages()) {
+  for (const { id, source } of assets.images) {
     if (!existsSync(source)) throw new Error(`Private image not found: ${source}`);
     const meta = await sharp(source).metadata();
     const width = meta.width ?? 0;
@@ -83,40 +88,25 @@ async function buildImages(manifest: PrivateManifest) {
   }
 }
 
-async function buildShowcases(manifest: PrivateManifest) {
-  const lockedDir = join(root, "showcases", "_locked");
-  if (!existsSync(lockedDir)) return;
-  for (const id of readdirSync(lockedDir)) {
-    const variantsDir = join(lockedDir, id, "variants");
-    if (!existsSync(variantsDir)) continue;
-    const variants = readdirSync(variantsDir).filter((f) => f.endsWith(".ts"));
-    manifest.showcases[id] = variants.map((f) => f.replace(/\.ts$/, ""));
-    for (const file of variants) {
-      await build({
-        configFile: false,
-        logLevel: "warn",
-        publicDir: false,
-        build: {
-          emptyOutDir: false,
-          outDir: join(out, "showcases", id),
-          minify: true,
-          lib: {
-            entry: join(variantsDir, file),
-            formats: ["es"],
-            fileName: () => file.replace(/\.ts$/, ".js"),
-          },
-        },
-      });
-    }
+function copyMedia(manifest: PrivateManifest, assets: ReturnType<typeof collectPrivateAssets>) {
+  const dir = join(out, "media");
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  for (const [name, source] of assets.media) {
+    if (!existsSync(source)) throw new Error(`Private video not found: ${source}`);
+    copyFileSync(source, join(dir, name));
+    manifest.media[name] = { size: statSync(source).size };
   }
 }
 
-const manifest: PrivateManifest = { images: {}, showcases: {} };
+const manifest: PrivateManifest = { images: {}, media: {} };
+const assets = collectPrivateAssets();
+// Output of the former showcase bundles; removed so it never lands in the function again.
 rmSync(join(out, "showcases"), { recursive: true, force: true });
-await buildImages(manifest);
-await buildShowcases(manifest);
+await buildImages(manifest, assets);
+copyMedia(manifest, assets);
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(
-  `[private] ${Object.keys(manifest.images).length} images, ${Object.keys(manifest.showcases).length} showcases → ${PRIVATE_DIR}/`,
+  `[private] ${Object.keys(manifest.images).length} images, ${Object.keys(manifest.media).length} videos → ${PRIVATE_DIR}/`,
 );

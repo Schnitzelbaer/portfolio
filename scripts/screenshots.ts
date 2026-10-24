@@ -8,7 +8,7 @@ import { chromium } from "@playwright/test";
 const base = process.argv[2] ?? "http://localhost:4321";
 const pages = (
   process.env.SCREENSHOT_PAGES ??
-  "/,/about,/work/ledger-onboarding,/work/care-scheduling,/work/design-system"
+  "/,/about,/work/swissgeol-assets,/work/ledger-onboarding,/work/care-scheduling"
 ).split(",");
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },

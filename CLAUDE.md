@@ -16,12 +16,11 @@ npm run preview        # serve the build like Vercel: http://portfolio.localhost
 npm run check          # astro check + Biome
 npm run format         # Biome autofix
 npm test               # Vitest unit tests
-npm run test:e2e       # production build + Playwright (leak tests, unlock, variants, tours)
+npm run test:e2e       # production build + Playwright (leak tests, unlock, variants, videos, agents, axe)
 npm run check:drafts   # list open [Screen: …] / [...] placeholders (optionally: -- <variant>)
 npm run import:notion -- <export.zip|folder|page.md> [--slug name] [--force]
 npm run variant:new -- <id> --company "Name" [--projects a,b] [--intro "…"]
 npm run password:hash  # LOCK_PASSWORD_HASH + LOCK_COOKIE_SECRET for .env and Vercel
-npm run showcases:fallbacks   # with the dev server running: static first frames of showcases
 npm run smoke -- <url> [--production] [--variant <url>]   # check a deployment, warm image cache
 npx lighthouse http://portfolio.localhost:4400/ --form-factor=mobile   # with npm run preview; CHROME_PATH=/opt/pw-browsers/chromium in cloud sessions
 ```
@@ -35,10 +34,10 @@ Run `npm run check` and `npm test` before every commit, `npm run test:e2e` befor
 - `src/components/blocks/`: MDX blocks. Every block is registered in `registry.ts`.
 - `src/lib/content/`: remark plugins (placeholders, block images) and draft scanning.
 - `src/lib/notion/`: Notion export → MDX conversion. `scripts/`: CLIs (thin wrappers around `src/lib`).
-- `showcases/<id>/`: tour prototypes, swappable per folder; `showcases/_locked/<id>/` for protected ones (see `showcases/README.md`).
+- Demos are pre-produced videos next to the case study (`content/work/<slug>/videos/`), embedded with the `<Video>` block (`src/components/blocks/Video.astro`, behaviour in `src/lib/video-demo.ts`). Provide WebM + MP4 and a poster, optionally a mobile variant.
 - `src/lib/routing/`: routing table for subdomains and content negotiation (Vercel, dev, preview).
 - `src/lib/auth/`: password hash and signed unlock cookie. `src/pages/protected/`: gated assets.
-- `private/` (generated, gitignored): locked images and showcase bundles, only in the server function.
+- `private/` (generated, gitignored): locked images and videos, only in the server function.
 - `docs/decisions/`: short decision notes (ADR style). Add one for every non-obvious technical decision.
 
 ## Rules
@@ -48,7 +47,7 @@ Run `npm run check` and `npm test` before every commit, `npm run test:e2e` befor
 - **No fixed domain.** Use `SITE_DOMAIN` (see `src/lib/domain.ts`). Never hardcode a hostname.
 - **No secrets in the repo.** The password exists only as a hash in ENV.
 - Content files are validated by schema; prefer better schema messages over runtime checks.
-- Client JavaScript only where interaction needs it (tour player, theme toggle). No UI frameworks.
+- Client JavaScript only where interaction needs it (video demos, clock, theme toggle). No UI frameworks.
 - Accessibility: semantic HTML, visible focus, keyboard support, `prefers-reduced-motion`, AA contrast in both themes.
 - Design: dark theme is the default, light theme equally polished. Design tokens as CSS custom properties. Mobile is the primary case.
 - Design and content decisions go to Simon; technical decisions are made and documented here.

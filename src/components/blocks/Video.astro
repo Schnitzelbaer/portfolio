@@ -1,0 +1,215 @@
+---
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+import { privateManifest } from "../../lib/private-assets";
+import Icon from "../Icon.astro";
+
+/**
+ * Pre-produced demo video: muted, looping, inline autoplay while visible, one play/pause
+ * button, no native controls or timeline. Behaviour lives in src/lib/video-demo.ts.
+ *
+ * In MDX, paths are relative to the case study:
+ *   <Video src="./videos/flow.mp4" webm="./videos/flow.webm"
+ *          mobileSrc="./videos/flow-mobile.mp4" mobileWebm="./videos/flow-mobile.webm"
+ *          poster="./videos/flow.jpg" mobilePoster="./videos/flow-mobile.jpg"
+ *          alt="What the video shows" caption="Optional caption" />
+ * The content pipeline turns the paths into published files, or into gated URLs and private ids
+ * inside locked content. `aspect` / `mobileAspect` (e.g. "16/10") default to the posters' sizes.
+ */
+interface Props {
+  src: string;
+  webm?: string;
+  mobileSrc?: string;
+  mobileWebm?: string;
+  poster?: ImageMetadata;
+  posterPrivateId?: string;
+  mobilePoster?: ImageMetadata;
+  mobilePosterPrivateId?: string;
+  aspect?: string;
+  mobileAspect?: string;
+  alt: string;
+  caption?: string;
+}
+
+const { src, webm, mobileSrc, mobileWebm, poster, posterPrivateId, mobilePoster, mobilePosterPrivateId, alt, caption } =
+  Astro.props;
+
+interface PosterSource {
+  src: string;
+  srcset: string;
+  width: number;
+  height: number;
+}
+
+async function posterSource(image?: ImageMetadata, privateId?: string): Promise<PosterSource | undefined> {
+  if (image) {
+    const widths = [480, 800, 1200, 1600].filter((w) => w <= image.width);
+    const result = await getImage({ src: image, format: "webp", widths: widths.length ? widths : [image.width] });
+    return { src: result.src, srcset: result.srcSet.attribute, width: image.width, height: image.height };
+  }
+  const meta = privateId && Astro.locals.unlocked ? privateManifest().images[privateId] : undefined;
+  if (!privateId || !meta) return undefined;
+  const fallback = meta.widths.find((w) => w >= 800) ?? meta.widths.at(-1);
+  return {
+    src: `/protected/img/${privateId}-${fallback}.webp`,
+    srcset: meta.widths.map((w) => `/protected/img/${privateId}-${w}.webp ${w}w`).join(", "),
+    width: meta.width,
+    height: meta.height,
+  };
+}
+
+const desktopPoster = await posterSource(poster, posterPrivateId);
+const mobilePosterSource = await posterSource(mobilePoster, mobilePosterPrivateId);
+
+const ratio = (value: string | undefined, fallback?: PosterSource) => {
+  const match = /^\s*(\d+(?:\.\d+)?)\s*[/:x]\s*(\d+(?:\.\d+)?)\s*$/.exec(value ?? "");
+  if (match) return `${match[1]} / ${match[2]}`;
+  return fallback ? `${fallback.width} / ${fallback.height}` : undefined;
+};
+const aspect = ratio(Astro.props.aspect, desktopPoster) ?? "16 / 9";
+const mobileAspect = ratio(Astro.props.mobileAspect, mobilePosterSource) ?? (mobileSrc || mobileWebm ? undefined : aspect);
+
+const sources = JSON.stringify({
+  desktop: { mp4: src, webm },
+  mobile: { mp4: mobileSrc, webm: mobileWebm },
+});
+const style = [`--aspect: ${aspect}`, mobileAspect && `--aspect-mobile: ${mobileAspect}`].filter(Boolean).join("; ");
+const sizes = "(min-width: 800px) 736px, calc(100vw - 48px)";
+---
+
+<figure class="block video-demo is-wide" data-video-demo data-sources={sources} style={style}>
+  <div class="video-demo__frame">
+    {
+      desktopPoster && (
+        <picture class="video-demo__poster">
+          {mobilePosterSource && <source media="(max-width: 40rem)" srcset={mobilePosterSource.srcset} sizes={sizes} />}
+          <img
+            src={desktopPoster.src}
+            srcset={desktopPoster.srcset}
+            sizes={sizes}
+            width={desktopPoster.width}
+            height={desktopPoster.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+      )
+    }
+    <video
+      class="video-demo__video"
+      muted
+      loop
+      playsinline
+      webkit-playsinline
+      preload="none"
+      disablepictureinpicture
+      disableRemotePlayback
+      aria-label={alt}></video>
+    <button
+      type="button"
+      class="video-demo__toggle"
+      data-video-toggle
+      data-mode="play"
+      data-label-play="Play video"
+      data-label-pause="Pause video"
+      aria-label="Play video"
+    >
+      <Icon name="play" size={18} class="video-demo__icon-play" />
+      <Icon name="pause" size={18} class="video-demo__icon-pause" />
+    </button>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  import { initVideoDemos } from "../../lib/video-demo";
+
+  initVideoDemos();
+</script>
+
+<style>
+  .video-demo__frame {
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    aspect-ratio: var(--aspect);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--border);
+    isolation: isolate;
+  }
+  @media (max-width: 40rem) {
+    .video-demo__frame {
+      aspect-ratio: var(--aspect-mobile, var(--aspect));
+    }
+  }
+  .video-demo__poster,
+  .video-demo__poster img,
+  .video-demo__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .video-demo__video {
+    opacity: 0;
+    transition: opacity var(--duration) var(--ease-out);
+  }
+  .video-demo[data-started="true"] .video-demo__video {
+    opacity: 1;
+  }
+  .video-demo__toggle {
+    position: absolute;
+    right: 0.875rem;
+    bottom: 0.875rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: rgb(23 22 29 / 0.78);
+    color: #f4f4f7;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+  .video-demo__toggle:active {
+    transform: scale(0.94);
+  }
+  .video-demo__toggle:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 50%;
+  }
+  @media (hover: hover) {
+    .video-demo__frame:hover .video-demo__toggle {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  .video-demo__toggle:focus-visible,
+  .video-demo[data-controls="visible"] .video-demo__toggle,
+  .video-demo[data-idle] .video-demo__toggle {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .video-demo__toggle[data-mode="play"] :global(.video-demo__icon-pause),
+  .video-demo__toggle[data-mode="pause"] :global(.video-demo__icon-play) {
+    display: none;
+  }
+  .video-demo__toggle :global(.video-demo__icon-play) {
+    transform: translateX(1px);
+    fill: currentColor;
+  }
+  .video-demo__toggle :global(.video-demo__icon-pause) {
+    fill: currentColor;
+  }
+</style>

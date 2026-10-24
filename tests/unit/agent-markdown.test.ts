@@ -8,13 +8,7 @@ import {
   SERIALIZED_BLOCKS,
 } from "../../src/lib/agent/markdown";
 
-const ctx = (unlocked = false): MarkdownContext => ({
-  unlocked,
-  describeShowcase: (id) =>
-    id === "care-roster"
-      ? { title: "Roster", description: "Locked tour.", locked: true }
-      : { title: "Onboarding", description: "A tour of the flow.", locked: false },
-});
+const ctx = (unlocked = false): MarkdownContext => ({ unlocked });
 
 describe("Markdown serializers", () => {
   it("cover every block", () => {
@@ -28,7 +22,7 @@ describe("Markdown serializers", () => {
     expect(md).toContain("**Decision: Show the whole path up front**");
     expect(md).toContain("**Before and after:**");
     expect(md).toContain("**Achieved outcome**");
-    expect(md).toContain("Interactive tour: Onboarding.");
+    expect(md).toMatch(/\[Video: [^\]]+\]/);
     expect(md).toContain("🔒 Risk scoring and fraud review");
     expect(md).not.toContain("fraud team uses");
     expect(md).not.toContain("risk-model");
@@ -40,15 +34,15 @@ describe("Markdown serializers", () => {
     expect(mdxToMarkdown(source, ctx(true))).toContain("The hidden part.");
   });
 
-  it("describes placeholders and protected showcases", () => {
+  it("describes placeholders and videos", () => {
     const md = mdxToMarkdown(
-      'Up by [...].\n\n[Screen: Login]\n\n<Showcase id="care-roster" />',
+      'Up by [...].\n\n[Screen: Login]\n\n<Video src="./v.mp4" alt="Login flow" caption="Two steps." />',
       ctx(),
     );
     expect(md).toContain("Up by […].");
     expect(md).toContain("[Image placeholder: Login]");
-    expect(md).toContain("password protected");
-    expect(md).not.toContain("Locked tour.");
+    expect(md).toContain("[Video: Login flow] _Two steps._");
+    expect(md).not.toContain("v.mp4");
   });
 
   it("describes local Markdown images instead of exposing their paths", () => {

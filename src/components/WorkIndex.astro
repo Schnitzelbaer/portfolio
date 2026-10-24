@@ -13,14 +13,14 @@ interface Props {
 const { label, intro, greeting, entries } = Astro.props;
 ---
 
-<div class="work full">
+<div class="work column">
   <div class="work__head">
     <div class="reveal" style="--i: 0"><SectionLabel as="h1">{label}</SectionLabel></div>
     {greeting && <p class="work__greeting reveal" style="--i: 1">{greeting}</p>}
     <p class="work__intro reveal" style="--i: 1">{intro}</p>
   </div>
   <ul role="list" class="work__grid">
-    {entries.map((entry, index) => <ProjectCard entry={entry} index={index} eager={index < 3} />)}
+    {entries.map((entry, index) => <ProjectCard entry={entry} index={index} eager={index < 1} />)}
   </ul>
 </div>
 
@@ -29,8 +29,7 @@ const { label, intro, greeting, entries } = Astro.props;
     padding-top: 3.75rem;
   }
   .work__head {
-    max-width: 34rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: 2.5rem;
   }
   .work__intro,
   .work__greeting {
@@ -45,8 +44,7 @@ const { label, intro, greeting, entries } = Astro.props;
   }
   .work__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-    gap: 2.75rem 0.75rem;
+    gap: 3rem;
   }
   @media (max-width: 40rem) {
     .work {

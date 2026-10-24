@@ -40,12 +40,14 @@ test("unlocking one case study unlocks all protected work", async ({ page }) => 
   }
 });
 
-test("a locked showcase loads only after unlocking", async ({ page }) => {
+test("a locked video loads only after unlocking", async ({ page }) => {
   await page.goto(`/work/${locked[0]}`);
-  await expect(page.locator('[data-showcase-id="care-roster"]')).toHaveCount(0);
+  await expect(page.locator("[data-video-demo]")).toHaveCount(0);
   await page.locator("form#unlock").getByLabel("Password").fill(PASSWORD);
   await page.locator("form#unlock").getByRole("button", { name: "Unlock" }).click();
-  const showcase = page.locator('[data-showcase-id="care-roster"]');
-  await showcase.scrollIntoViewIfNeeded();
-  await expect(showcase).toHaveAttribute("data-state", "ready", { timeout: 10_000 });
+  const video = page.locator("[data-video-demo]").first();
+  await video.scrollIntoViewIfNeeded();
+  await expect(video).toHaveAttribute("data-playing", "true", { timeout: 10_000 });
+  const src = await video.locator("video").evaluate((v: HTMLVideoElement) => v.currentSrc);
+  expect(src).toContain("/protected/media/");
 });

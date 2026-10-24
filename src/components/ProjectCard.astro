@@ -19,8 +19,8 @@ const { title, cover, coverAlt, keyFacts, outcome, locked } = entry.data;
       <Image
         src={cover}
         alt={coverAlt}
-        widths={[480, 720, 960, 1280]}
-        sizes="(min-width: 1500px) 470px, (min-width: 1080px) 31vw, (min-width: 700px) 47vw, 100vw"
+        widths={[480, 720, 992, 1280]}
+        sizes="(min-width: 560px) 496px, calc(100vw - 48px)"
         loading={eager ? "eager" : "lazy"}
         fetchpriority={index === 0 ? "high" : "auto"}
       />

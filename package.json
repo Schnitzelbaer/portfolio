@@ -15,7 +15,6 @@
     "check:drafts": "tsx scripts/check-drafts.ts",
     "import:notion": "tsx scripts/import-notion.ts",
     "screenshots": "tsx scripts/screenshots.ts",
-    "showcases:fallbacks": "tsx scripts/showcase-fallbacks.ts",
     "variant:new": "tsx scripts/variant-new.ts",
     "build:private": "tsx scripts/build-private.ts",
     "preview": "tsx scripts/preview-server.ts",

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import { expect, test } from "@playwright/test";
@@ -10,6 +11,7 @@ import {
   lockedSlugs,
   MAIN,
   PASSWORD_HASH,
+  privateMediaHashes,
   staticFiles,
   unlockCookie,
   variantHost,
@@ -18,7 +20,7 @@ import {
 
 /**
  * Proves that locked content never leaves the server without the password: not in HTML, not in
- * Markdown/agent responses, not in static files, images or showcase bundles.
+ * Markdown/agent responses, not in static files, images or videos.
  */
 const secrets = lockedSecrets();
 const { locked, withLockedSection } = lockedSlugs();
@@ -28,13 +30,18 @@ test("the content has locked material to protect (sanity check)", () => {
   expect(locked.length).toBeGreaterThan(0);
   expect(secrets.filter((s) => s.source.includes("locked text")).length).toBeGreaterThan(5);
   expect(secrets.some((s) => s.source === "private image id")).toBe(true);
-  expect(secrets.some((s) => s.source.startsWith("locked showcase"))).toBe(true);
+  expect(secrets.some((s) => s.source === "private video")).toBe(true);
 });
 
-test("no static file contains locked text, private image ids or locked showcase code", () => {
+test("no static file contains locked text or private file names, or is a locked video", () => {
+  const videoHashes = new Set(privateMediaHashes());
   const found: string[] = [];
   for (const file of staticFiles()) {
-    const body = readFileSync(file, "latin1");
+    const bytes = readFileSync(file);
+    if (videoHashes.has(createHash("sha256").update(bytes).digest("hex"))) {
+      found.push(`${relative(process.cwd(), file)}: copy of a locked video`);
+    }
+    const body = bytes.toString("latin1");
     for (const secret of leaks(body, secrets))
       found.push(`${relative(process.cwd(), file)}: ${secret.source} "${secret.value}"`);
   }
@@ -86,12 +93,12 @@ test("public entry points leak nothing", async () => {
   }
 });
 
-test("protected images and showcase bundles require the password", async () => {
+test("protected images and videos require the password", async () => {
   const imageId = secrets.find((s) => s.source === "private image id")?.value;
   const paths = [
     `/protected/img/${imageId}-480.webp`,
     `/protected/img/${imageId}-480.avif`,
-    "/protected/showcases/care-roster/default.js",
+    `/protected/media/${secrets.find((s) => s.source === "private video")?.value}`,
   ];
   const expired = await createToken(COOKIE_SECRET, PASSWORD_HASH, Date.now() - 40 * 86_400_000);
   const valid = await createToken(COOKIE_SECRET, PASSWORD_HASH);
@@ -155,6 +162,11 @@ test("with the password, locked content and assets are served", async () => {
   const image = await get(`/protected/img/${imageId}-480.webp`, { headers: { cookie } });
   expect(image.status).toBe(200);
   expect(image.headers["content-type"]).toBe("image/webp");
-  const bundle = await get("/protected/showcases/care-roster/default.js", { headers: { cookie } });
-  expect(bundle.status).toBe(200);
+  const video = secrets.find((s) => s.source === "private video")?.value ?? "";
+  const partial = await get(`/protected/media/${video}`, {
+    headers: { cookie, range: "bytes=0-1023" },
+  });
+  expect(partial.status).toBe(206);
+  expect(partial.headers["content-range"]).toMatch(/^bytes 0-1023\/\d+$/);
+  expect(partial.headers["content-type"]).toMatch(/^video\/(mp4|webm)$/);
 });

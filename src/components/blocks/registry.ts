@@ -12,9 +12,9 @@ import Outcome from "./Outcome.astro";
 import Placeholder from "./Placeholder.astro";
 import Quote from "./Quote.astro";
 import Reflection from "./Reflection.astro";
-import Showcase from "./Showcase.astro";
 import Toggle from "./Toggle.astro";
 import Variant from "./Variant.astro";
+import Video from "./Video.astro";
 
 /**
  * Every component that case studies may use in MDX, by tag name.
@@ -35,7 +35,7 @@ export const blocks = {
   Placeholder,
   Quote,
   Reflection,
-  Showcase,
   Toggle,
   Variant,
+  Video,
 } satisfies Record<BlockName, unknown>;

@@ -1,6 +1,5 @@
 import { getEntry } from "astro:content";
 import type { PageContext } from "../page";
-import { getShowcase } from "../showcases";
 import { site } from "../site";
 import type { WorkEntry } from "../work";
 import { caseStudyMarkdown, type MarkdownContext, mdxToMarkdown } from "./markdown";
@@ -8,19 +7,7 @@ import { caseStudyMarkdown, type MarkdownContext, mdxToMarkdown } from "./markdo
 /** Markdown documents for agents, per page. Locked content only with `unlocked`. */
 
 export function markdownContext(unlocked: boolean): MarkdownContext {
-  return {
-    unlocked,
-    describeShowcase: (id) => {
-      const showcase = getShowcase(id);
-      return (
-        showcase && {
-          title: showcase.config.title,
-          description: showcase.config.description,
-          locked: showcase.locked,
-        }
-      );
-    },
-  };
+  return { unlocked };
 }
 
 const mdUrl = (context: PageContext, path: string) =>

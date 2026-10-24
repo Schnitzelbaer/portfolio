@@ -18,10 +18,6 @@ import { isEmptyGap, tokenizePlaceholders } from "../content/placeholders";
 export interface MarkdownContext {
   /** Visitor has a valid unlock cookie (on-demand routes only). */
   unlocked: boolean;
-  /** Title and description of a showcase for its text alternative. */
-  describeShowcase: (
-    id: string,
-  ) => { title: string; description: string; locked: boolean } | undefined;
 }
 
 type JsxElement = MdxJsxFlowElement | MdxJsxTextElement;
@@ -109,16 +105,14 @@ const serializers: Record<BlockName, Serializer> = {
     ...children,
   ],
   Toggle: (node, children) => [paragraph(strong(attr(node, "summary") ?? "")), ...children],
-  Showcase: (node, _, ctx) => {
-    const id = attr(node, "id") ?? "";
-    const info = ctx.describeShowcase(id);
+  Video: (node) => {
     const caption = attr(node, "caption");
-    if (!info || (info.locked && !ctx.unlocked)) {
-      return [paragraph(text("[Interactive prototype, password protected]"))];
-    }
+    const alt = attr(node, "alt");
     return [
-      paragraph(strong(`Interactive tour: ${info.title}.`), text(` ${info.description}`)),
-      ...(caption ? [paragraph(emphasis(caption))] : []),
+      paragraph(
+        text(alt ? `[Video: ${alt}]` : "[Video]"),
+        ...(caption ? [text(" "), emphasis(caption)] : []),
+      ),
     ];
   },
   Locked: (node, children, ctx) =>

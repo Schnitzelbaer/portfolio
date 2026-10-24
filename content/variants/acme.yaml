@@ -1,8 +1,7 @@
 company: Acme AG
 intro: >-
-  Hello Acme team! Here are three projects that match the Senior Product Designer role, starting with
+  Hello Acme team! Here are two projects that match the Senior Product Designer role, starting with
   the onboarding work you asked about.
 projects:
   - ledger-onboarding
   - care-scheduling
-  - transit-planner

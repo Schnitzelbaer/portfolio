@@ -13,12 +13,35 @@ import {
   setAttr,
   stringAttr,
 } from "./mdast-jsx";
-import { entrySlugFromPath, isRelativeAsset, privateImageId } from "./private-images";
+import {
+  entrySlugFromPath,
+  isRelativeAsset,
+  privateImageId,
+  privateMediaFile,
+} from "./private-images";
 
-/** Block components and the attributes that hold a local image path. */
-export const IMAGE_ATTRIBUTES: Record<string, string[]> = {
-  Figure: ["src"],
-  Variant: ["src"],
+/**
+ * Block components and their attributes that hold a local file path.
+ * `image`: optimized by astro:assets; in locked context replaced by `privateAttr`.
+ * `media` (video): imported as a URL; in locked context replaced by a gated `/protected/media` URL.
+ */
+interface AssetAttribute {
+  name: string;
+  kind: "image" | "media";
+  privateAttr?: string;
+}
+
+export const ASSET_ATTRIBUTES: Record<string, AssetAttribute[]> = {
+  Figure: [{ name: "src", kind: "image", privateAttr: "privateId" }],
+  Variant: [{ name: "src", kind: "image", privateAttr: "privateId" }],
+  Video: [
+    { name: "src", kind: "media" },
+    { name: "webm", kind: "media" },
+    { name: "mobileSrc", kind: "media" },
+    { name: "mobileWebm", kind: "media" },
+    { name: "poster", kind: "image", privateAttr: "posterPrivateId" },
+    { name: "mobilePoster", kind: "image", privateAttr: "mobilePosterPrivateId" },
+  ],
 };
 
 /** The component whose children must stay behind the password gate. */
@@ -29,18 +52,20 @@ interface AstroFileData {
 }
 
 /**
- * Resolves local image paths in block components.
+ * Resolves local image and video paths in block components.
  *
- * Public context: the path becomes a static import, so Astro optimizes it.
- * Locked context (entry with `locked: true`, or inside `<Locked>`): the path is replaced by an
- * opaque `privateId` and never imported. This keeps locked images out of the public build output
- * by construction; they are served later by the gated `/protected` endpoint.
+ * Public context: the path becomes a static import, so Astro optimizes images and publishes videos.
+ * Locked context (entry with `locked: true`, or inside `<Locked>`): images are replaced by an
+ * opaque private id, videos by a gated `/protected/media/…` URL; neither is ever imported. This
+ * keeps locked files out of the public build output by construction.
  *
  * Plain Markdown images are normalized to `<Figure>` first so the same rules apply to them.
  */
 export interface BlockImagesOptions {
   /** Called for every image that stays private (used by `scripts/build-private.ts`). */
   onPrivateImage?: (image: { id: string; src: string; filePath: string }) => void;
+  /** Called for every video that stays private (used by `scripts/build-private.ts`). */
+  onPrivateMedia?: (media: { file: string; src: string; filePath: string }) => void;
 }
 
 export function remarkBlockImages(options: BlockImagesOptions = {}) {
@@ -57,24 +82,30 @@ export function remarkBlockImages(options: BlockImagesOptions = {}) {
 
     visitParents(tree, (node, ancestors) => {
       if (!isJsxElement(node)) return;
-      const attributes = node.name ? IMAGE_ATTRIBUTES[node.name] : undefined;
+      const attributes = node.name ? ASSET_ATTRIBUTES[node.name] : undefined;
       if (!attributes) return;
       const locked =
         entryLocked || ancestors.some((a) => isJsxElement(a) && a.name === LOCKED_COMPONENT);
 
-      for (const name of attributes) {
+      for (const { name, kind, privateAttr } of attributes) {
         const src = getStringAttr(node, name);
         if (!isRelativeAsset(src)) continue;
-        if (locked) {
+        if (locked && kind === "image") {
           const id = privateImageId(slug, src);
           removeAttr(node, name);
-          setAttr(node, stringAttr("privateId", id));
+          setAttr(node, stringAttr(privateAttr ?? "privateId", id));
           options.onPrivateImage?.({ id, src, filePath: file.path });
+          continue;
+        }
+        if (locked) {
+          const mediaFile = privateMediaFile(slug, src);
+          setAttr(node, stringAttr(name, `/protected/media/${mediaFile}`));
+          options.onPrivateMedia?.({ file: mediaFile, src, filePath: file.path });
           continue;
         }
         let identifier = known.get(src);
         if (!identifier) {
-          identifier = `__blockImage${known.size}`;
+          identifier = `__blockAsset${known.size}`;
           known.set(src, identifier);
           imports.push(`import ${identifier} from ${JSON.stringify(src)};`);
         }

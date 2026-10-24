@@ -36,10 +36,10 @@ describe("remarkPlaceholders", () => {
 describe("remarkBlockImages", () => {
   it("imports images in public content", () => {
     const out = run('<Figure src="./images/a.jpg" alt="A" />\n\n![B](./images/b.jpg "Caption B")');
-    expect(out).toContain('import __blockImage0 from "./images/a.jpg"');
-    expect(out).toContain('import __blockImage1 from "./images/b.jpg"');
-    expect(out).toContain("src={__blockImage0}");
-    expect(out).toContain('<Figure src={__blockImage1} alt="B" caption="Caption B" />');
+    expect(out).toContain('import __blockAsset0 from "./images/a.jpg"');
+    expect(out).toContain('import __blockAsset1 from "./images/b.jpg"');
+    expect(out).toContain("src={__blockAsset0}");
+    expect(out).toContain('<Figure src={__blockAsset1} alt="B" caption="Caption B" />');
   });
 
   it("never imports images inside <Locked>", () => {
@@ -58,6 +58,25 @@ describe("remarkBlockImages", () => {
     });
     expect(out).not.toContain("import ");
     expect(out).toContain("privateId=");
+  });
+
+  it("imports public videos and their posters", () => {
+    const out = run(
+      '<Video src="./videos/a.mp4" webm="./videos/a.webm" poster="./videos/a.jpg" alt="A" />',
+    );
+    expect(out).toContain('import __blockAsset0 from "./videos/a.mp4"');
+    expect(out).toContain("webm={__blockAsset1}");
+    expect(out).toContain("poster={__blockAsset2}");
+  });
+
+  it("never imports videos in locked context", () => {
+    const out = run(
+      '<Locked>\n  <Video src="./videos/s.mp4" mobileWebm="./videos/s-m.webm" poster="./videos/s.jpg" alt="S" />\n</Locked>',
+    );
+    expect(out).not.toContain("import ");
+    expect(out).toMatch(/src="\/protected\/media\/demo--s-[0-9a-f]{10}\.mp4"/);
+    expect(out).toMatch(/mobileWebm="\/protected\/media\/demo--s-m-[0-9a-f]{10}\.webm"/);
+    expect(out).toContain(`posterPrivateId="${privateImageId("demo", "./videos/s.jpg")}"`);
   });
 
   it("leaves remote images alone", () => {

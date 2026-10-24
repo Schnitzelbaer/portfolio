@@ -19,7 +19,16 @@ interface Spec {
 }
 
 const projects: Record<string, Spec[]> = {
-  "swissgeol-assets": [{ file: "cover.jpg", label: "swissgeol assets", kind: "desktop", hue: 30 }],
+  "swissgeol-assets": [
+    {
+      file: "cover.jpg",
+      label: "swissgeol assets",
+      kind: "desktop",
+      hue: 30,
+      width: 1600,
+      height: 1200,
+    },
+  ],
   "ledger-onboarding": [
     { file: "cover.jpg", label: "Brightvale onboarding", kind: "cover", hue: 152 },
     { file: "images/flow-before.jpg", label: "Onboarding v1 · 14 steps", kind: "mobile", hue: 10 },
@@ -39,22 +48,10 @@ const projects: Record<string, Spec[]> = {
     { file: "images/dashboard.jpg", label: "Account home", kind: "desktop", hue: 152 },
     { file: "images/risk-model.jpg", label: "Risk scoring model", kind: "diagram", hue: 0 },
   ],
-  "transit-planner": [
-    { file: "cover.jpg", label: "Lakeline journey planner", kind: "cover", hue: 205 },
-    { file: "images/planner.jpg", label: "Trip planner", kind: "desktop", hue: 205 },
-  ],
   "care-scheduling": [
     { file: "cover.jpg", label: "Kindred shift planning", kind: "cover", hue: 28 },
     { file: "images/roster.jpg", label: "Weekly roster", kind: "desktop", hue: 28 },
     { file: "images/handover.jpg", label: "Shift handover", kind: "mobile", hue: 40 },
-  ],
-  "energy-dashboard": [
-    { file: "cover.jpg", label: "Voltaro energy insights", kind: "cover", hue: 48 },
-    { file: "images/overview.jpg", label: "Portfolio overview", kind: "desktop", hue: 48 },
-  ],
-  "design-system": [
-    { file: "cover.jpg", label: "Orbis design system", kind: "cover", hue: 275 },
-    { file: "images/tokens.jpg", label: "Token architecture", kind: "diagram", hue: 275 },
   ],
 };
 

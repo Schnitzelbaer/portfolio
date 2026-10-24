@@ -4,7 +4,7 @@ import { get, lockedSlugs, unlockCookie, variantHost, variants } from "./helpers
 const { locked } = lockedSlugs();
 
 test("pages answer Accept: text/markdown with Markdown", async () => {
-  for (const path of ["/", "/about", "/work/transit-planner", `/work/${locked[0]}`]) {
+  for (const path of ["/", "/about", "/work/swissgeol-assets", `/work/${locked[0]}`]) {
     const res = await get(path, { headers: { accept: "text/markdown" } });
     expect(res.status, path).toBe(200);
     expect(res.headers["content-type"], path).toContain("text/markdown");
@@ -23,13 +23,13 @@ test("known AI crawlers get Markdown by default, browsers get HTML", async () =>
 });
 
 test("every page links its Markdown version and llms.txt", async ({ page }) => {
-  await page.goto("/work/transit-planner");
+  await page.goto("/work/swissgeol-assets");
   await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute(
     "href",
-    "/work/transit-planner.md",
+    "/work/swissgeol-assets.md",
   );
   const llms = await get("/llms.txt");
-  expect(llms.body).toContain("/work/transit-planner.md");
+  expect(llms.body).toContain("/work/swissgeol-assets.md");
   for (const slug of locked)
     expect(llms.body).toMatch(new RegExp(`${slug}\\.md\\): .*Password protected`));
 });
@@ -58,10 +58,10 @@ test("variants have their own Markdown and llms.txt", async () => {
 test("the For agents switch toggles between the regular and the agent version", async ({
   page,
 }) => {
-  await page.goto("/work/transit-planner");
+  await page.goto("/work/swissgeol-assets");
   await page.getByRole("link", { name: "For agents: agent-friendly version of this page" }).click();
-  await expect(page).toHaveURL(/\/agent\/work\/transit-planner$/);
-  await expect(page.locator(".agent__doc")).toContainText("# A journey planner");
+  await expect(page).toHaveURL(/\/agent\/work\/swissgeol-assets$/);
+  await expect(page.locator(".agent__doc")).toContainText("# Opening up decades");
   await page.getByRole("link", { name: "For agents: on. Back to the regular version" }).click();
-  await expect(page).toHaveURL(/\/work\/transit-planner$/);
+  await expect(page).toHaveURL(/\/work\/swissgeol-assets$/);
 });

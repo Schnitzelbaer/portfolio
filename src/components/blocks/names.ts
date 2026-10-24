@@ -14,9 +14,9 @@ export const BLOCK_NAMES = [
   "Placeholder",
   "Quote",
   "Reflection",
-  "Showcase",
   "Toggle",
   "Variant",
+  "Video",
 ] as const;
 
 export type BlockName = (typeof BLOCK_NAMES)[number];

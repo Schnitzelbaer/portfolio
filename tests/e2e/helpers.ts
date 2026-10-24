@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { request as httpRequest } from "node:http";
 import { join } from "node:path";
@@ -102,22 +103,12 @@ export function lockedSecrets(): Secret[] {
   if (existsSync(manifestFile)) {
     const manifest = JSON.parse(readFileSync(manifestFile, "utf8")) as {
       images: Record<string, unknown>;
-      showcases: Record<string, string[]>;
+      media: Record<string, unknown>;
     };
     for (const id of Object.keys(manifest.images))
       secrets.push({ source: "private image id", value: id });
-    for (const [id, variants] of Object.entries(manifest.showcases)) {
-      for (const variant of variants) {
-        const bundle = readFileSync(
-          join(root, "private", "showcases", id, `${variant}.js`),
-          "utf8",
-        );
-        for (const value of bundle.match(/"[A-Z][a-z]+(?: [a-z]+){2,}[^"]{0,40}"/g)?.slice(0, 5) ??
-          []) {
-          secrets.push({ source: `locked showcase ${id}`, value: value.slice(1, -1) });
-        }
-      }
-    }
+    for (const file of Object.keys(manifest.media))
+      secrets.push({ source: "private video", value: file });
   }
   return secrets;
 }
@@ -181,4 +172,21 @@ export async function unlockCookie(host = MAIN): Promise<string> {
   });
   const cookie = [res.headers["set-cookie"] ?? []].flat()[0] ?? "";
   return cookie.split(";")[0] ?? "";
+}
+
+/** SHA-256 of every locked video, to prove no static file is a copy of one. */
+export function privateMediaHashes(): string[] {
+  const dir = join(root, "private", "media");
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).map((f) =>
+    createHash("sha256")
+      .update(readFileSync(join(dir, f)))
+      .digest("hex"),
+  );
+}
+
+/** Case study slugs from content/work. */
+export function allSlugs(): string[] {
+  const workDir = join(root, "content", "work");
+  return readdirSync(workDir).filter((slug) => existsSync(join(workDir, slug, "index.mdx")));
 }

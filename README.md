@@ -31,10 +31,17 @@ Variants run locally at `http://<id>.portfolio.localhost:4321` (no setup needed;
 
 ## What else is in here
 
-- **Showcases:** code-based tours with cursor, captions and a timeline, see [showcases/README.md](showcases/README.md).
-- **Password protection:** one password for all locked work, checked on the server. Locked text, images and showcase code are never part of the public build. Set it with `npm run password:hash`.
+- **Video demos:** put the files next to the case study and embed them with `<Video>`:
+  ```mdx
+  <Video src="./videos/flow.mp4" webm="./videos/flow.webm"
+         mobileSrc="./videos/flow-mobile.mp4" mobileWebm="./videos/flow-mobile.webm"
+         poster="./videos/flow.jpg" mobilePoster="./videos/flow-mobile.jpg"
+         alt="What the video shows" caption="Optional caption" />
+  ```
+  Only `src`, `poster` and `alt` are required. Videos play muted and looped while visible, with one play/pause button. Small screens load the mobile file if there is one. Export a poster from the first frame, for example `ffmpeg -i flow.mp4 -frames:v 1 flow.jpg`.
+- **Password protection:** one password for all locked work, checked on the server. Locked text, images and videos are never part of the public build. Set it with `npm run password:hash`.
 - **Agent version:** every page as Markdown (`.md` URLs, `Accept: text/markdown`, known AI crawlers), `llms.txt`, and the "For agents" switch. Locked content stays locked there too.
-- **Tests:** `npm test` (unit), `npm run test:e2e` (production build: leak tests, unlock flow, variants, agents, tours, axe).
+- **Tests:** `npm test` (unit), `npm run test:e2e` (production build: leak tests, unlock flow, variants, agents, videos, axe).
 
 ## Deploy (Vercel + Hostpoint)
 

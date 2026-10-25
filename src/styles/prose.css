@@ -24,26 +24,29 @@
   grid-column: full;
 }
 .prose > * + * {
-  margin-top: 1.125rem;
+  margin-top: 1.5rem;
 }
 .prose > h2 {
-  margin-top: 3.25rem;
+  margin-top: 4.5rem;
   font-size: var(--text-lg);
   letter-spacing: -0.015em;
 }
 .prose > h3 {
-  margin-top: 2.25rem;
+  margin-top: 3rem;
   font-size: var(--text-md);
 }
 .prose > h2 + *,
 .prose > h3 + * {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 }
 .prose > .block {
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 .prose > .block + :not(.block) {
-  margin-top: 2rem;
+  margin-top: 3rem;
+}
+.prose > :is(h2, h3) + .block {
+  margin-top: 1.5rem;
 }
 .prose strong {
   color: var(--text);
@@ -64,7 +67,7 @@
   padding-left: 1.25rem;
 }
 .prose li + li {
-  margin-top: 0.375rem;
+  margin-top: 0.625rem;
 }
 .prose li::marker {
   color: var(--text-subtle);
@@ -84,10 +87,10 @@
 }
 .prose figcaption,
 .caption {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   color: var(--text-subtle);
   font-size: var(--text-sm);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .prose hr {
   border: 0;

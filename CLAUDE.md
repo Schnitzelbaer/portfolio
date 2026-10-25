@@ -27,6 +27,8 @@ npx lighthouse http://portfolio.localhost:4400/ --form-factor=mobile   # with np
 
 Run `npm run check` and `npm test` before every commit, `npm run test:e2e` before every push that touches routing, auth or content handling.
 
+Git: work directly on `main`, no feature branches. Commit and push small, self-contained steps often, so every state can be restored.
+
 ## Layout
 
 - `content/`: all content, never code. `work/<slug>/index.mdx` (+ `images/`), `pages/*.mdx`, `variants/<id>.yaml`, `site.yaml`.

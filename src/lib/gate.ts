@@ -1,10 +1,9 @@
-import { isGated, nextIn, type PageContext, pageContext, workFor } from "./page";
+import { isGated, type PageContext, pageContext, workFor } from "./page";
 import { getVariant } from "./variants";
 import type { WorkEntry } from "./work";
 
 export interface GatedPage {
   entry: WorkEntry;
-  next: WorkEntry | undefined;
   context: PageContext;
   /** The request asked for `/work/<slug>.md`. */
   markdownPath: boolean;
@@ -26,5 +25,5 @@ export async function resolveGatedPage(
   const list = await workFor(variant);
   const entry = list.find((e) => e.id === slug);
   if (!entry || !isGated(entry)) return undefined;
-  return { entry, next: nextIn(list, entry), context: pageContext(variant), markdownPath };
+  return { entry, context: pageContext(variant), markdownPath };
 }

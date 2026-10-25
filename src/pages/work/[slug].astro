@@ -1,6 +1,6 @@
 ---
 import CaseStudyView from "../../components/CaseStudyView.astro";
-import { isGated, nextIn, pageContext } from "../../lib/page";
+import { isGated, pageContext } from "../../lib/page";
 import { getWork, type WorkEntry } from "../../lib/work";
 
 /** Public case studies, prerendered. Gated ones are served by `[...gated].astro`. */
@@ -8,14 +8,13 @@ export async function getStaticPaths() {
   const work = await getWork();
   return work
     .filter((entry) => !isGated(entry))
-    .map((entry) => ({ params: { slug: entry.id }, props: { entry, next: nextIn(work, entry) } }));
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
 interface Props {
   entry: WorkEntry;
-  next: WorkEntry | undefined;
 }
-const { entry, next } = Astro.props;
+const { entry } = Astro.props;
 ---
 
-<CaseStudyView entry={entry} next={next} context={pageContext()} showBody />
+<CaseStudyView entry={entry} context={pageContext()} showBody />

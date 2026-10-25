@@ -31,8 +31,3 @@ export async function workFor(variant: Variant | undefined): Promise<WorkEntry[]
 export function isGated(entry: WorkEntry): boolean {
   return entry.data.locked || hasLockedSection(entry);
 }
-
-export function nextIn(list: WorkEntry[], entry: WorkEntry): WorkEntry | undefined {
-  if (list.length < 2) return undefined;
-  return list[(list.findIndex((e) => e.id === entry.id) + 1) % list.length];
-}

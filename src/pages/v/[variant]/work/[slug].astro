@@ -1,6 +1,6 @@
 ---
 import CaseStudyView from "../../../../components/CaseStudyView.astro";
-import { isGated, nextIn, pageContext } from "../../../../lib/page";
+import { isGated, pageContext } from "../../../../lib/page";
 import { getVariants, getVariantWork } from "../../../../lib/variants";
 
 export async function getStaticPaths() {
@@ -8,13 +8,13 @@ export async function getStaticPaths() {
   for (const variant of await getVariants()) {
     const work = await getVariantWork(variant);
     for (const entry of work.filter((e) => !isGated(e))) {
-      paths.push({ params: { variant: variant.id, slug: entry.id }, props: { variant, entry, next: nextIn(work, entry) } });
+      paths.push({ params: { variant: variant.id, slug: entry.id }, props: { variant, entry } });
     }
   }
   return paths;
 }
 
-const { variant, entry, next } = Astro.props;
+const { variant, entry } = Astro.props;
 ---
 
-<CaseStudyView entry={entry} next={next} context={pageContext(variant)} showBody />
+<CaseStudyView entry={entry} context={pageContext(variant)} showBody />

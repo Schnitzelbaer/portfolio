@@ -25,7 +25,7 @@ const showBody = page ? !page.entry.data.locked || unlocked : false;
 
 {
   page ? (
-    <CaseStudyView entry={page.entry} next={page.next} context={page.context} showBody={showBody}>
+    <CaseStudyView entry={page.entry} context={page.context} showBody={showBody}>
       <UnlockForm slot="gate" />
     </CaseStudyView>
   ) : (

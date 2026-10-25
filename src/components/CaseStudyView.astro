@@ -7,11 +7,10 @@ import CaseStudy from "./CaseStudy.astro";
 /** Full case study page (layout + body) for the main site, variants and the gate. */
 interface Props {
   entry: WorkEntry;
-  next: WorkEntry | undefined;
   context: PageContext;
   showBody: boolean;
 }
-const { entry, next, context, showBody } = Astro.props;
+const { entry, context, showBody } = Astro.props;
 const { data } = entry;
 ---
 
@@ -24,7 +23,7 @@ const { data } = entry;
   ogImage={`${context.origin}/og/work/${entry.id}.png`}
   analytics={context.analytics}
 >
-  <CaseStudy entry={entry} next={next} showBody={showBody}>
+  <CaseStudy entry={entry} showBody={showBody}>
     <slot name="gate" slot="gate" />
   </CaseStudy>
 </Base>

@@ -14,10 +14,9 @@ import SectionLabel from "./SectionLabel.astro";
  */
 interface Props {
   entry: WorkEntry;
-  next?: WorkEntry | undefined;
   showBody: boolean;
 }
-const { entry, next, showBody } = Astro.props;
+const { entry, showBody } = Astro.props;
 const { data } = entry;
 const Content = showBody ? (await render(entry)).Content : null;
 const year = data.date.getFullYear();
@@ -62,20 +61,6 @@ const year = data.date.getFullYear();
     )
   }
 
-  {
-    next && (
-      <nav class="case__next column" aria-label="Next case study">
-        <a href={`/work/${next.id}`} class="next">
-          <span class="mono">Next case study</span>
-          <span class="next__title">
-            {next.data.title}
-            {next.data.locked && <Icon name="lock" size={14} label="Password protected" />}
-          </span>
-          <Icon name="arrowUpRight" size={16} class="next__arrow" />
-        </a>
-      </nav>
-    )
-  }
 </article>
 
 <style>
@@ -123,43 +108,5 @@ const year = data.date.getFullYear();
   }
   .case__gate {
     margin-top: 2.5rem;
-  }
-  .case__next {
-    margin-top: 6rem;
-  }
-  .next {
-    position: relative;
-    display: grid;
-    gap: 0.375rem;
-    padding: 1.25rem 3rem 1.25rem 1.25rem;
-    border-radius: var(--radius);
-    background: var(--surface);
-    box-shadow: 0 0 0 1px var(--border);
-    transition: background var(--duration-fast) var(--ease-out);
-  }
-  .next:hover {
-    background: var(--surface-hover);
-  }
-  .next__title {
-    color: var(--text);
-    font-weight: 600;
-  }
-  .next__title :global(svg) {
-    display: inline-block;
-    margin-left: 0.4em;
-    vertical-align: -0.1em;
-    color: var(--text-muted);
-  }
-  :global(.next__arrow) {
-    position: absolute;
-    right: 1.25rem;
-    top: 50%;
-    translate: 0 -50%;
-    color: var(--text-muted);
-    transition: transform var(--duration-fast) var(--ease-out);
-  }
-  .next:hover :global(.next__arrow) {
-    transform: translate(2px, -2px);
-    color: var(--text);
   }
 </style>

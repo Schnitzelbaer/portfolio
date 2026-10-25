@@ -45,10 +45,12 @@ test("the end of a page stays clear of the bottom fade", async ({ page }) => {
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
-  test("the navigation sits at the bottom and there are no fades", async ({ page }) => {
+  test("the navigation stays at the top and there are no fades", async ({ page }) => {
     await page.goto("/work/ledger-onboarding");
-    const bar = await page.locator(".nav__tabs").boundingBox();
-    expect(bar && bar.y + bar.height).toBeGreaterThan(844 - 60);
+    await page.evaluate(() => window.scrollTo(0, 2000));
+    await expect
+      .poll(async () => (await page.locator(".nav__tabs").boundingBox())?.y)
+      .toBeLessThan(30);
     await expect(page.locator(".edge-blur").first()).toBeHidden();
     await expect(page.getByRole("link", { name: "About" })).toBeVisible();
   });

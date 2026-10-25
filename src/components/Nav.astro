@@ -2,8 +2,7 @@
 import Icon, { type IconName } from "./Icon.astro";
 
 /**
- * Pill tabs in a frosted bar: sticky at the top on larger screens, fixed at the bottom on
- * small ones (thumb reach). Project pages add a round back button left of the tabs, outside
+ * Pill tabs in a frosted bar, sticky at the top. Project pages add a round back button left of the tabs, outside
  * the centred group so the tabs stay in place.
  */
 interface Props {
@@ -148,9 +147,6 @@ const items: Array<{ id: "work" | "about"; label: string; href: string; icon: Ic
     opacity: 0.9;
   }
   @media (max-width: 40rem) {
-    .nav {
-      --nav-h: 3rem;
-    }
     .nav__link {
       padding: 0 1rem;
     }

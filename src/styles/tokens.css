@@ -93,10 +93,10 @@
     0 4px 14px rgb(20 20 30 / 0.06);
 }
 
-/* Small screens: no fade bands; --edge-bottom only reserves room for the bottom nav. */
+/* Small screens: no fade bands, only the safe area at the bottom. */
 @media (max-width: 40rem) {
   :root {
     --edge-top: 0px;
-    --edge-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+    --edge-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
   }
 }

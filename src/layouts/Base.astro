@@ -114,9 +114,8 @@ const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.sit
   }
   @media (max-width: 40rem) {
     .site-header {
-      position: fixed;
-      inset: auto 0 calc(env(safe-area-inset-bottom, 0px) + 0.875rem);
-      padding-top: 0;
+      top: -1rem;
+      padding-top: 1.75rem;
     }
   }
 </style>

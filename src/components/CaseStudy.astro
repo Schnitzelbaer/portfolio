@@ -42,8 +42,8 @@ const year = data.date.getFullYear();
       <Image
         src={data.cover}
         alt={data.coverAlt}
-        widths={[480, 736, 992, 1472]}
-        sizes="(min-width: 800px) 736px, calc(100vw - 48px)"
+        widths={[480, 800, 1200, 1600]}
+        sizes="(min-width: 788px) 740px, calc(100vw - 48px)"
         loading="eager"
         fetchpriority="high"
       />
@@ -79,7 +79,10 @@ const year = data.date.getFullYear();
 </article>
 
 <style>
+  /* Case studies read in a wider column than the list and About; wide blocks match it. */
   .case {
+    --col: 46.25rem;
+    --col-wide: 46.25rem;
     padding-top: 3.75rem;
   }
   .case__eyebrow {

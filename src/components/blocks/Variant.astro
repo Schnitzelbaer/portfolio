@@ -18,7 +18,7 @@ const widths = [360, 480, 736, 1000].filter((w) => !src || w <= src.width);
   <div class="media">
     {
       src ? (
-        <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={widths} sizes="(min-width: 800px) 362px, calc(100vw - 48px)" />
+        <Picture src={src} alt={alt} formats={["avif", "webp"]} widths={widths} sizes="(min-width: 788px) 364px, calc(100vw - 48px)" />
       ) : privateId ? (
         <LockedMedia id={privateId} alt={alt} />
       ) : null

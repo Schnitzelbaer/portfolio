@@ -12,7 +12,7 @@ interface Props {
   alt: string;
   sizes?: string;
 }
-const { id, alt, sizes = "(min-width: 560px) 496px, calc(100vw - 48px)" } = Astro.props;
+const { id, alt, sizes = "(min-width: 788px) 740px, calc(100vw - 48px)" } = Astro.props;
 const image = Astro.locals.unlocked ? privateManifest().images[id] : undefined;
 const srcset = (format: string) =>
   image?.widths.map((w) => `/protected/img/${id}-${w}.${format} ${w}w`).join(", ") ?? "";

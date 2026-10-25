@@ -15,13 +15,8 @@ interface Props {
   size?: "content" | "wide" | "full";
 }
 const { src, privateId, alt, caption, size = "content" } = Astro.props;
-const sizes =
-  size === "full"
-    ? "100vw"
-    : size === "wide"
-      ? "(min-width: 800px) 736px, calc(100vw - 48px)"
-      : "(min-width: 560px) 496px, calc(100vw - 48px)";
-const widths = [480, 736, 992, 1472, 2000].filter((w) => !src || w <= src.width);
+const sizes = size === "full" ? "100vw" : "(min-width: 788px) 740px, calc(100vw - 48px)";
+const widths = [480, 800, 1200, 1600, 2000].filter((w) => !src || w <= src.width);
 ---
 
 <figure class:list={["block", "figure", { "is-wide": size === "wide", "is-full": size === "full" }]}>

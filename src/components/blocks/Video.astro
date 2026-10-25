@@ -74,7 +74,7 @@ const sources = JSON.stringify({
   mobile: { mp4: mobileSrc, webm: mobileWebm },
 });
 const style = [`--aspect: ${aspect}`, mobileAspect && `--aspect-mobile: ${mobileAspect}`].filter(Boolean).join("; ");
-const sizes = "(min-width: 788px) 740px, calc(100vw - 48px)";
+const sizes = "(min-width: 688px) 640px, calc(100vw - 48px)";
 ---
 
 <figure class="block video-demo is-wide" data-video-demo data-sources={sources} style={style}>

@@ -1,6 +1,7 @@
 ---
 import interUrl from "../assets/fonts/inter-latin-wght.woff2?url";
 import monoUrl from "../assets/fonts/geist-mono-latin-wght.woff2?url";
+import EdgeBlur from "../components/EdgeBlur.astro";
 import Footer from "../components/Footer.astro";
 import Nav from "../components/Nav.astro";
 import { site } from "../lib/site";
@@ -11,6 +12,8 @@ interface Props {
   description?: string | undefined;
   noindex?: boolean;
   current?: "work" | "about" | undefined;
+  /** Shows a back button in the navigation that links here (project pages). */
+  back?: string | undefined;
   /** Target of the "For agents" switch; defaults to the agent view of this page. */
   agentHref?: string | false;
   agentActive?: boolean;
@@ -26,6 +29,7 @@ const {
   description = site.work.intro,
   noindex = false,
   current,
+  back,
   agentHref,
   agentActive = false,
   markdown,
@@ -81,12 +85,38 @@ const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.sit
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header>
-      <Nav current={current} />
+    <EdgeBlur edge="top" />
+    <header class="site-header">
+      <Nav current={current} back={back} />
     </header>
     <main id="main">
       <slot />
     </main>
+    <EdgeBlur edge="bottom" />
     <Footer agentHref={agentLink} agentActive={agentActive} />
   </body>
 </html>
+
+<style>
+  /* Sticky with a negative offset: the bar starts 4.25rem down and stops 1rem from the top. */
+  .site-header {
+    position: sticky;
+    top: -3.25rem;
+    z-index: 30;
+    padding-top: 4.25rem;
+    pointer-events: none;
+  }
+  @media (min-width: 48rem) {
+    /* The footer is fixed here, so the page itself must end clear of the bottom fade. */
+    main {
+      padding-bottom: calc(var(--edge-bottom) + 2rem);
+    }
+  }
+  @media (max-width: 40rem) {
+    .site-header {
+      position: fixed;
+      inset: auto 0 calc(env(safe-area-inset-bottom, 0px) + 0.875rem);
+      padding-top: 0;
+    }
+  }
+</style>

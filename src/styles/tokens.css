@@ -28,7 +28,6 @@
   --focus: #8fb4ff;
   --shadow-pill:
     inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 14px rgb(0 0 0 / 0.25);
-  --fade: linear-gradient(to top, var(--bg) 10%, rgb(23 22 29 / 0));
 
   /* Type */
   --font-sans:
@@ -55,6 +54,9 @@
   --radius-lg: 1.125rem;
   --radius-pill: 999px;
   --space-section: 3rem;
+  /* Blurred fade bands at the viewport edges (EdgeBlur). */
+  --edge-top: 6rem;
+  --edge-bottom: 5.5rem;
 
   /* Motion */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -89,5 +91,12 @@
   --shadow-pill:
     inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(20 20 30 / 0.08),
     0 4px 14px rgb(20 20 30 / 0.06);
-  --fade: linear-gradient(to top, var(--bg) 10%, rgb(246 246 248 / 0));
+}
+
+/* Small screens: no fade bands; --edge-bottom only reserves room for the bottom nav. */
+@media (max-width: 40rem) {
+  :root {
+    --edge-top: 0px;
+    --edge-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+  }
 }

@@ -1,0 +1,66 @@
+---
+/**
+ * Fixed band at the top or bottom edge of the viewport: content scrolling under it gets
+ * progressively blurrier and fades into the background. Three backdrop-blur layers with
+ * staggered masks approximate a smooth blur ramp; the gradient on top does the fade.
+ */
+interface Props {
+  edge: "top" | "bottom";
+}
+const { edge } = Astro.props;
+---
+
+<div class:list={["edge-blur", `edge-blur--${edge}`]} aria-hidden="true">
+  <span></span><span></span><span></span>
+</div>
+
+<style>
+  .edge-blur {
+    --dir: to top;
+    position: fixed;
+    inset-inline: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .edge-blur--top {
+    --dir: to bottom;
+    top: 0;
+    height: var(--edge-top);
+  }
+  .edge-blur--bottom {
+    bottom: 0;
+    height: var(--edge-bottom);
+  }
+  /* Not on small screens: the bottom nav floats on its own frosted bar. */
+  @media (max-width: 40rem) {
+    .edge-blur {
+      display: none;
+    }
+  }
+  .edge-blur span,
+  .edge-blur::after {
+    position: absolute;
+    inset: 0;
+  }
+  .edge-blur span:nth-child(1) {
+    backdrop-filter: blur(1px);
+    mask-image: linear-gradient(var(--dir), #000 0%, transparent 100%);
+  }
+  .edge-blur span:nth-child(2) {
+    backdrop-filter: blur(3px);
+    mask-image: linear-gradient(var(--dir), #000 0%, transparent 70%);
+  }
+  .edge-blur span:nth-child(3) {
+    backdrop-filter: blur(8px);
+    mask-image: linear-gradient(var(--dir), #000 0%, transparent 40%);
+  }
+  .edge-blur::after {
+    content: "";
+    background: linear-gradient(
+      var(--dir),
+      var(--bg) 0%,
+      color-mix(in srgb, var(--bg) 70%, transparent) 35%,
+      transparent 100%
+    );
+  }
+</style>

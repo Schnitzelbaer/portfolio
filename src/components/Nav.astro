@@ -1,11 +1,17 @@
 ---
 import Icon, { type IconName } from "./Icon.astro";
 
-/** Pill tabs. On small screens inactive tabs collapse to their icon, like the reference. */
+/**
+ * Pill tabs in a frosted bar: sticky at the top on larger screens, fixed at the bottom on
+ * small ones (thumb reach). Project pages add a round back button left of the tabs, outside
+ * the centred group so the tabs stay in place.
+ */
 interface Props {
   current: "work" | "about" | undefined;
+  /** Target of the back button; no button when unset. */
+  back?: string | undefined;
 }
-const { current } = Astro.props;
+const { current, back } = Astro.props;
 const items: Array<{ id: "work" | "about"; label: string; href: string; icon: IconName }> = [
   { id: "work", label: "Work", href: "/", icon: "work" },
   { id: "about", label: "About", href: "/about", icon: "about" },
@@ -13,40 +19,100 @@ const items: Array<{ id: "work" | "about"; label: string; href: string; icon: Ic
 ---
 
 <nav class="nav" aria-label="Main">
-  <ul role="list">
+  <div class="nav__bar">
     {
-      items.map((item) => {
-        const active = item.id === current;
-        return (
-          <li>
-            <a href={item.href} class:list={["nav__link", { "is-active": active }]} aria-current={active ? "page" : undefined}>
-              {active && <span class="nav__pill" aria-hidden="true" />}
-              <Icon name={item.icon} size={16} class="nav__icon" />
-              <span class="nav__label">{item.label}</span>
-            </a>
-          </li>
-        );
-      })
+      back && (
+        <a class="nav__back" href={back} data-nav-back aria-label="Back to work">
+          <Icon name="back" size={18} />
+        </a>
+      )
     }
-  </ul>
+    <ul class="nav__tabs" role="list">
+      {
+        items.map((item) => {
+          const active = item.id === current;
+          return (
+            <li>
+              <a href={item.href} class:list={["nav__link", { "is-active": active }]} aria-current={active ? "page" : undefined}>
+                {active && <span class="nav__pill" aria-hidden="true" />}
+                <span class="nav__content" style={`view-transition-name: nav-${item.id}`}>
+                  <Icon name={item.icon} size={16} class="nav__icon" />
+                  <span class="nav__label">{item.label}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
 </nav>
+
+<script is:inline>
+  // Coming from the list, go back in history so the list keeps its scroll position.
+  document.addEventListener("click", (event) => {
+    const link = event.target instanceof Element && event.target.closest("[data-nav-back]");
+    if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    try {
+      const from = new URL(document.referrer);
+      const to = new URL(link.href);
+      if (from.origin === location.origin && from.pathname === to.pathname && history.length > 1) {
+        event.preventDefault();
+        history.back();
+      }
+    } catch {}
+  });
+</script>
 
 <style>
   .nav {
-    padding-top: 4.25rem;
+    --nav-h: 2.75rem;
     display: flex;
     justify-content: center;
   }
-  ul {
+  .nav__bar {
+    position: relative;
     display: flex;
-    gap: 0.375rem;
+    pointer-events: auto;
+  }
+  .nav__tabs,
+  .nav__back {
+    height: var(--nav-h);
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
+    backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: var(--shadow-pill);
+  }
+  /* View transitions: the bar, the gliding pill and each tab's label are separate layers,
+     painted in this order, so the pill never covers a label mid-transition. */
+  .nav__tabs {
+    view-transition-name: nav-bar;
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0 0.25rem;
+    border-radius: var(--radius-pill);
+  }
+  .nav__back {
+    position: absolute;
+    top: 0;
+    right: calc(100% + 0.5rem);
+    display: grid;
+    place-items: center;
+    width: var(--nav-h);
+    border-radius: 50%;
+    color: var(--text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .nav__back:hover {
+    color: var(--text);
   }
   .nav__link {
     position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    height: 2.125rem;
+    height: calc(var(--nav-h) - 0.5rem - 2px);
     padding: 0 0.875rem;
     border-radius: var(--radius-pill);
     color: var(--text-muted);
@@ -72,27 +138,21 @@ const items: Array<{ id: "work" | "about"; label: string; href: string; icon: Ic
     view-transition-name: nav-pill;
     z-index: -1;
   }
+  .nav__content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
   .nav__link :global(.nav__icon) {
     flex: none;
     opacity: 0.9;
   }
   @media (max-width: 40rem) {
     .nav {
-      padding-top: 1.75rem;
-      justify-content: flex-start;
-      width: calc(100% - 2 * var(--gutter));
-      margin-inline: auto;
+      --nav-h: 3rem;
     }
-    .nav__link:not(.is-active) {
-      padding: 0 0.625rem;
-    }
-    .nav__link:not(.is-active) .nav__label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      white-space: nowrap;
+    .nav__link {
+      padding: 0 1rem;
     }
     .nav__link :global(.nav__icon) {
       width: 18px;

@@ -25,6 +25,9 @@ export default defineConfig({
   build: { format: "file" },
   adapter: vercel({ includeFiles: privateFiles() }),
   integrations: [mdx(), draftGate()],
+  // Browsers the CSS is compiled for: the minifier adds vendor prefixes (e.g. -webkit-backdrop-filter
+  // for Safari before 18) from this list, so source CSS stays unprefixed.
+  vite: { build: { cssTarget: ["chrome111", "edge111", "firefox114", "safari16.4", "ios16.4"] } },
   markdown: {
     processor: unified({
       remarkPlugins: [remarkPlaceholders, remarkBlockImages],

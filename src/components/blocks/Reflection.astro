@@ -27,11 +27,12 @@ const { title = "Reflection" } = Astro.props;
     padding: 0;
     counter-reset: reflection;
   }
+  /* The number hangs in the left gutter, so items with mixed inline content (bold lead-in,
+     notes) flow as one paragraph. */
   .reflection__body :global(li) {
     counter-increment: reflection;
-    display: grid;
-    grid-template-columns: 2.25rem 1fr;
-    padding: 0.875rem 0;
+    position: relative;
+    padding: 0.875rem 0 0.875rem 2.25rem;
     margin: 0;
     color: var(--text);
     font-size: var(--text-ui);
@@ -45,6 +46,8 @@ const { title = "Reflection" } = Astro.props;
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-mono);
     color: var(--text-subtle);
-    padding-top: 0.2rem;
+    position: absolute;
+    left: 0;
+    top: 1.075rem;
   }
 </style>

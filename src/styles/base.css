@@ -194,6 +194,18 @@ p {
   animation-duration: var(--duration);
   animation-timing-function: var(--ease-out);
 }
+/* Layer order is taken from the old page, where the pill can come after a label (About to
+   Work). Pin it: bar, then pill, then labels. */
+::view-transition-group(nav-bar) {
+  z-index: 1;
+}
+::view-transition-group(nav-pill) {
+  z-index: 2;
+}
+::view-transition-group(nav-work),
+::view-transition-group(nav-about) {
+  z-index: 3;
+}
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 220ms;

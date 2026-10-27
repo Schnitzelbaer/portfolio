@@ -29,6 +29,16 @@ const projects: Record<string, Spec[]> = {
       height: 1200,
     },
   ],
+  "fdfa-design-system": [
+    {
+      file: "cover.jpg",
+      label: "Agiler Cluster",
+      kind: "desktop",
+      hue: 0,
+      width: 1600,
+      height: 1200,
+    },
+  ],
   "ledger-onboarding": [
     { file: "cover.jpg", label: "Brightvale onboarding", kind: "cover", hue: 152 },
     { file: "images/flow-before.jpg", label: "Onboarding v1 · 14 steps", kind: "mobile", hue: 10 },

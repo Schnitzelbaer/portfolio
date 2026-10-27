@@ -1,0 +1,70 @@
+---
+title: A design system for consular services on the web
+lead: Over the years, the web applications of the Swiss Federal Department of Foreign Affairs drifted apart without a shared design foundation. As the UI designer, I am building the design system «Agiler Cluster». It puts spacious customer portals for Swiss citizens abroad and information-dense specialist applications on one shared foundation.
+date: 2026-10-16
+author: Simon Wirth
+cover: ./cover.jpg
+coverAlt: Placeholder cover for the «Agiler Cluster» design system (planned hero, the customer portal on a smartphone next to a specialist application on the desktop)
+locked: false
+outcome: One library with around 100 components and four modes for customer portals and specialist applications alike.
+order: 1
+keyFacts:
+  role: UI designer, responsible for the design system
+  client: FDFA, Swiss Federal Department of Foreign Affairs
+  team: 1 UI designer (me), 2 UX designers at the FDFA, 1 software developer
+  period: 2025 – 2026
+  status: In progress, partly live
+  tools: Figma (variables, component properties), MudBlazor
+---
+
+## In numbers
+
+| Number | What | Behind it |
+| --- | --- | --- |
+| ~100 | Components | Each in two to four sizes, depending on the context |
+| 652 | Variables | In three collections, from the colors of the corporate design to spacing and font sizes |
+| 4 | Modes | Internal and external, each on smartphone and desktop |
+| AA | WCAG level | Federal authorities must meet the WCAG AA accessibility standard |
+
+## Context
+
+The FDFA is Switzerland's foreign ministry. Besides diplomacy, it supports Swiss citizens abroad with a range of requests, such as ordering a new Swiss passport. Behind the scenes, many FDFA employees process these requests in complex internal specialist applications.
+
+The Swiss federal corporate design defines the colors, typography and basic elements of government websites. For information-dense specialist applications, however, key building blocks are missing, for example complex tables and navigation, multi-step forms, or understated headers and footers.
+
+The existing FDFA applications were built without a shared design foundation and look inconsistent as a result. A comprehensive design system is meant to bring them together.
+
+## The challenge
+
+A Swiss citizen abroad might order a passport once every ten years, often on their phone. That calls for clear guidance with few decisions per screen. Case workers at the FDFA, on the other hand, sit in front of the same screens every day and want to see as much as possible at a glance. The two user groups have little in common, yet both have to be served by the same design system.
+
+## My role
+
+I am the only UI designer on the project and responsible for building the design system. Variables, components and documentation are my work. Two UX designers at the FDFA design the web applications. They give me the domain context and concrete use cases that I align the library with. A software developer implements it in code.
+
+## Solution: one library, four modes
+
+A single library covers all applications. Each application runs in one of four modes: internal or external, each on smartphone or desktop. When the mode changes, the variables adjust font and component sizes automatically. The external applications have a generous header and top navigation, the specialist applications a very reduced header with side navigation.
+
+[Screen: Figma embed, node a1704188-1a42]
+
+[Screen: The same form as a specialist application and as a customer portal on the desktop, side by side]
+
+The foundation is MudBlazor, the component library the developers work with. The Figma library follows its components so that design and code stay close together.
+
+## One Figma file, optimized for AI
+
+Development resources at the FDFA are scarce, so a software developer uses AI to translate the Figma components directly into MudBlazor code. This only works if the Figma file is structured so that the AI understands as much as possible without asking.
+
+### What makes the Figma file AI-ready
+
+[Not finished yet. Possible points:]
+
+- Property names and values match the parameters of the MudBlazor components where possible, such as Variant, Color and Size
+- Variable names follow MudBlazor's CSS variables
+- Every component has a description of its purpose and limits
+- [Context Markdown files?]
+
+## Status and outlook
+
+The system is in progress and partly live. Two internal FDFA software products are currently trying out the new components. It is too early for reliable figures on time saved, consistency or adoption. The system was built mainly for consular services. Other areas of the FDFA are to follow.

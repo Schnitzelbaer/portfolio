@@ -5,6 +5,7 @@ const pages = [
   "/",
   "/about",
   "/work/swissgeol-assets",
+  "/work/fdfa-design-system",
   "/work/ledger-onboarding",
   "/work/care-scheduling",
   "/agent/about",

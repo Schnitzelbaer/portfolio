@@ -1,0 +1,45 @@
+---
+/** One figure inside `<Stats>`: the number, what it counts and an optional note. */
+interface Props {
+  value: string;
+  label: string;
+  note?: string;
+}
+const { value, label, note } = Astro.props;
+---
+
+<div class="stat">
+  <dt class="stat__label mono">{label}</dt>
+  <dd class="stat__value">{value}</dd>
+  {note && <dd class="stat__note">{note}</dd>}
+</div>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--divider);
+  }
+  /* Number first visually; the label stays first in reading order (term, then value). */
+  .stat__value {
+    order: -1;
+    margin: 0;
+    color: var(--text);
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat__label {
+    margin-top: 0.75rem;
+    color: var(--text);
+  }
+  .stat__note {
+    margin: 0.375rem 0 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+</style>

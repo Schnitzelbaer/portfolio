@@ -12,6 +12,8 @@ import Outcome from "./Outcome.astro";
 import Placeholder from "./Placeholder.astro";
 import Quote from "./Quote.astro";
 import Reflection from "./Reflection.astro";
+import Stat from "./Stat.astro";
+import Stats from "./Stats.astro";
 import Toggle from "./Toggle.astro";
 import Variant from "./Variant.astro";
 import Video from "./Video.astro";
@@ -35,6 +37,8 @@ export const blocks = {
   Placeholder,
   Quote,
   Reflection,
+  Stat,
+  Stats,
   Toggle,
   Variant,
   Video,

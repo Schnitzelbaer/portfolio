@@ -100,6 +100,27 @@ const serializers: Record<BlockName, Serializer> = {
     const title = attr(node, "title");
     return [...(title ? [paragraph(strong(title))] : []), ...children];
   },
+  Stats: (_, children) => [
+    {
+      type: "list",
+      ordered: false,
+      spread: false,
+      children: children.map((child) => ({
+        type: "listItem",
+        spread: false,
+        children: [child as BlockContent],
+      })),
+    },
+  ],
+  Stat: (node) => {
+    const note = attr(node, "note");
+    return [
+      paragraph(
+        strong(`${attr(node, "value") ?? ""} ${attr(node, "label") ?? ""}`.trim()),
+        ...(note ? [text(`: ${note}`)] : []),
+      ),
+    ];
+  },
   Reflection: (node, children) => [
     { type: "heading", depth: 2, children: [text(attr(node, "title") ?? "Reflection")] },
     ...children,

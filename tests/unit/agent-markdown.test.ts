@@ -45,6 +45,15 @@ describe("Markdown serializers", () => {
     expect(md).not.toContain("v.mp4");
   });
 
+  it("lists key figures", () => {
+    const md = mdxToMarkdown(
+      '<Stats>\n  <Stat value="652" label="Variables" note="In three collections" />\n  <Stat value="4" label="Modes" />\n</Stats>',
+      ctx(),
+    );
+    expect(md).toContain("- **652 Variables**: In three collections");
+    expect(md).toContain("- **4 Modes**");
+  });
+
   it("describes local Markdown images instead of exposing their paths", () => {
     const md = mdxToMarkdown('![Planner](./images/planner.jpg "Live departures.")', ctx());
     expect(md).toBe("[Image: Planner] _Live departures._");

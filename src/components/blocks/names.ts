@@ -14,6 +14,8 @@ export const BLOCK_NAMES = [
   "Placeholder",
   "Quote",
   "Reflection",
+  "Stat",
+  "Stats",
   "Toggle",
   "Variant",
   "Video",

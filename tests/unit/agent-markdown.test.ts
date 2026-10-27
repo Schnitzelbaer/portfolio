@@ -63,13 +63,15 @@ describe("Markdown serializers", () => {
       outcome: "O",
       date: new Date("2024-01-01"),
       locked: true,
-      keyFacts: { role: "R", client: "C", team: "Te", status: "S" },
+      keyFacts: { role: "R", client: "C", team: "Te", status: "S", tools: "Figma" },
     };
     const md = caseStudyMarkdown(meta, "Top secret body text.", {
       url: "https://x/work/t",
       ctx: ctx(),
     });
     expect(md).toContain("# T");
+    expect(md).toContain("- Tools: Figma");
+    expect(md).not.toContain("Period");
     expect(md).toContain("password protected");
     expect(md).not.toContain("Top secret");
   });

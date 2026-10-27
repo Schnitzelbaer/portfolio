@@ -28,6 +28,10 @@ const work = defineCollection({
           client: z.string(required("keyFacts.client")),
           team: z.string(required("keyFacts.team")),
           status: z.string(required("keyFacts.status")),
+          /** Optional: time span, e.g. "2025 – 2026". */
+          period: z.string().optional(),
+          /** Optional: tools and technologies. */
+          tools: z.string().optional(),
         },
         required("keyFacts", " (role, client, team, status)"),
       ),

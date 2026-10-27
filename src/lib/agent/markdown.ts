@@ -214,7 +214,14 @@ export interface CaseStudyMeta {
   outcome: string;
   date: Date;
   locked: boolean;
-  keyFacts: { role: string; client: string; team: string; status: string };
+  keyFacts: {
+    role: string;
+    client: string;
+    team: string;
+    status: string;
+    period?: string | undefined;
+    tools?: string | undefined;
+  };
 }
 
 /** Full Markdown document for a case study. The body is only included when allowed. */
@@ -227,11 +234,15 @@ export function caseStudyMarkdown(
     `- Role: ${meta.keyFacts.role}`,
     `- Client: ${meta.keyFacts.client}`,
     `- Team: ${meta.keyFacts.team}`,
+    meta.keyFacts.period && `- Period: ${meta.keyFacts.period}`,
     `- Status: ${meta.keyFacts.status}`,
+    meta.keyFacts.tools && `- Tools: ${meta.keyFacts.tools}`,
     `- Date: ${meta.date.toISOString().slice(0, 7)}`,
     `- Outcome: ${meta.outcome}`,
     `- Web version: ${options.url}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
   const head = `# ${meta.title}\n\n> ${meta.lead}\n\n${facts}`;
   if (meta.locked && !options.ctx.unlocked) {
     return `${head}\n\n🔒 This case study is password protected. Title, summary and key facts are public; the full case study requires the password from the application.\n`;

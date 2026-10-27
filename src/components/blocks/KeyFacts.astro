@@ -1,18 +1,23 @@
 ---
-/** Role, client, team and status from the case study frontmatter, as dotted leader rows. */
+/** Key facts from the case study frontmatter, as dotted leader rows. Period and tools are optional. */
 interface Props {
   role: string;
   client: string;
   team: string;
   status: string;
+  period?: string | undefined;
+  tools?: string | undefined;
 }
-const { role, client, team, status } = Astro.props;
-const facts = [
+const { role, client, team, status, period, tools } = Astro.props;
+const rows: Array<[string, string | undefined]> = [
   ["Role", role],
   ["Client", client],
   ["Team", team],
+  ["Period", period],
   ["Status", status],
-] as const;
+  ["Tools", tools],
+];
+const facts = rows.filter((row): row is [string, string] => Boolean(row[1]));
 ---
 
 <dl class="key-facts">

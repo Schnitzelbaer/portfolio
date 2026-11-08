@@ -19,16 +19,6 @@ interface Spec {
 }
 
 const projects: Record<string, Spec[]> = {
-  "swissgeol-assets": [
-    {
-      file: "cover.jpg",
-      label: "swissgeol assets",
-      kind: "desktop",
-      hue: 30,
-      width: 1600,
-      height: 1200,
-    },
-  ],
   "fdfa-design-system": [
     {
       file: "cover.jpg",

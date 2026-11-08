@@ -1,0 +1,72 @@
+---
+import Icon from "./Icon.astro";
+
+/**
+ * The single play/pause button of a video (`[data-video-demo]` root, see src/lib/video-demo.ts).
+ * Same surface as the active navigation pill. Hidden until the root is hovered (mouse), was
+ * tapped (touch), the button has keyboard focus, or the video does not play on its own.
+ */
+---
+
+<button
+  type="button"
+  class="video-toggle"
+  data-video-toggle
+  data-mode="play"
+  data-label-play="Play video"
+  data-label-pause="Pause video"
+  aria-label="Play video"
+>
+  <Icon name="play" size={18} class="video-toggle__play" />
+  <Icon name="pause" size={18} class="video-toggle__pause" />
+</button>
+
+<style>
+  .video-toggle {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: linear-gradient(to bottom, var(--surface-strong), var(--surface));
+    color: var(--text);
+    box-shadow: var(--shadow-pill);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+  .video-toggle:active {
+    transform: scale(0.94);
+  }
+  .video-toggle:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 50%;
+  }
+  @media (hover: hover) {
+    :global([data-video-demo]:hover) .video-toggle {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  .video-toggle:focus-visible,
+  :global([data-video-demo][data-controls="visible"]) .video-toggle,
+  :global([data-video-demo][data-idle]) .video-toggle {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .video-toggle[data-mode="play"] :global(.video-toggle__pause),
+  .video-toggle[data-mode="pause"] :global(.video-toggle__play) {
+    display: none;
+  }
+  .video-toggle :global(.video-toggle__play) {
+    transform: translateX(1px);
+  }
+</style>

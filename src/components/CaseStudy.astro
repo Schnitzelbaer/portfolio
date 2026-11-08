@@ -1,10 +1,12 @@
 ---
 import { Image } from "astro:assets";
 import { render } from "astro:content";
+import { coverVideo } from "../lib/cover-video";
 import type { WorkEntry } from "../lib/work";
 import "../styles/prose.css";
 import KeyFacts from "./blocks/KeyFacts.astro";
 import { blocks } from "./blocks/registry";
+import Video from "./blocks/Video.astro";
 import Icon from "./Icon.astro";
 import SectionLabel from "./SectionLabel.astro";
 
@@ -17,6 +19,7 @@ interface Props {
   showBody: boolean;
 }
 const { entry, showBody } = Astro.props;
+const video = coverVideo(entry.id);
 const { data } = entry;
 const Content = showBody ? (await render(entry)).Content : null;
 const year = data.date.getFullYear();
@@ -37,16 +40,29 @@ const year = data.date.getFullYear();
   </header>
 
   <div class="case__cover wide reveal" style="--i: 4">
-    <div class="media">
-      <Image
-        src={data.cover}
-        alt={data.coverAlt}
-        widths={[480, 768, 1152, 1536]}
-        sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
+    {
+      video ? (
+        <Video
+          src={video.page.mp4 ?? ""}
+          webm={video.page.webm}
+          poster={data.cover}
+          alt={data.coverAlt}
+          sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
+          eager
+        />
+      ) : (
+        <div class="media">
+          <Image
+            src={data.cover}
+            alt={data.coverAlt}
+            widths={[480, 768, 1152, 1536]}
+            sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+      )
+    }
   </div>
 
   {

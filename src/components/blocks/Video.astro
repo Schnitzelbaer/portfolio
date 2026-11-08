@@ -2,7 +2,7 @@
 import type { ImageMetadata } from "astro";
 import { getImage } from "astro:assets";
 import { privateManifest } from "../../lib/private-assets";
-import Icon from "../Icon.astro";
+import VideoToggle from "../VideoToggle.astro";
 
 /**
  * Pre-produced demo video: muted, looping, inline autoplay while visible, one play/pause
@@ -29,10 +29,25 @@ interface Props {
   mobileAspect?: string;
   alt: string;
   caption?: string;
+  /** Poster `sizes`; defaults to the case study column. */
+  sizes?: string;
+  /** Load the poster eagerly (video at the top of a page, LCP candidate). */
+  eager?: boolean;
 }
 
-const { src, webm, mobileSrc, mobileWebm, poster, posterPrivateId, mobilePoster, mobilePosterPrivateId, alt, caption } =
-  Astro.props;
+const {
+  src,
+  webm,
+  mobileSrc,
+  mobileWebm,
+  poster,
+  posterPrivateId,
+  mobilePoster,
+  mobilePosterPrivateId,
+  alt,
+  caption,
+  eager = false,
+} = Astro.props;
 
 interface PosterSource {
   src: string;
@@ -74,7 +89,7 @@ const sources = JSON.stringify({
   mobile: { mp4: mobileSrc, webm: mobileWebm },
 });
 const style = [`--aspect: ${aspect}`, mobileAspect && `--aspect-mobile: ${mobileAspect}`].filter(Boolean).join("; ");
-const sizes = "(min-width: 688px) 640px, calc(100vw - 48px)";
+const sizes = Astro.props.sizes ?? "(min-width: 688px) 640px, calc(100vw - 48px)";
 ---
 
 <figure class="block video-demo is-wide" data-video-demo data-sources={sources} style={style}>
@@ -90,7 +105,8 @@ const sizes = "(min-width: 688px) 640px, calc(100vw - 48px)";
             width={desktopPoster.width}
             height={desktopPoster.height}
             alt=""
-            loading="lazy"
+            loading={eager ? "eager" : "lazy"}
+            fetchpriority={eager ? "high" : "auto"}
             decoding="async"
           />
         </picture>
@@ -106,18 +122,7 @@ const sizes = "(min-width: 688px) 640px, calc(100vw - 48px)";
       disablepictureinpicture
       disableRemotePlayback
       aria-label={alt}></video>
-    <button
-      type="button"
-      class="video-demo__toggle"
-      data-video-toggle
-      data-mode="play"
-      data-label-play="Play video"
-      data-label-pause="Pause video"
-      aria-label="Play video"
-    >
-      <Icon name="play" size={18} class="video-demo__icon-play" />
-      <Icon name="pause" size={18} class="video-demo__icon-pause" />
-    </button>
+    <VideoToggle />
   </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
@@ -159,53 +164,5 @@ const sizes = "(min-width: 688px) 640px, calc(100vw - 48px)";
   }
   .video-demo[data-started="true"] .video-demo__video {
     opacity: 1;
-  }
-  /* Same surface as the active navigation pill. */
-  .video-demo__toggle {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    background: linear-gradient(to bottom, var(--surface-strong), var(--surface));
-    color: var(--text);
-    box-shadow: var(--shadow-pill);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
-  }
-  .video-demo__toggle:active {
-    transform: scale(0.94);
-  }
-  .video-demo__toggle:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 3px;
-    border-radius: 50%;
-  }
-  @media (hover: hover) {
-    .video-demo__frame:hover .video-demo__toggle {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-  .video-demo__toggle:focus-visible,
-  .video-demo[data-controls="visible"] .video-demo__toggle,
-  .video-demo[data-idle] .video-demo__toggle {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .video-demo__toggle[data-mode="play"] :global(.video-demo__icon-pause),
-  .video-demo__toggle[data-mode="pause"] :global(.video-demo__icon-play) {
-    display: none;
-  }
-  .video-demo__toggle :global(.video-demo__icon-play) {
-    transform: translateX(1px);
   }
 </style>

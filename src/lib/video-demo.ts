@@ -15,6 +15,7 @@ interface Sources {
 
 const MOBILE = "(max-width: 40rem)";
 const HIDE_AFTER_MS = 3000;
+const APPLE = /Apple/.test(navigator.vendor);
 
 function setup(root: HTMLElement) {
   const video = root.querySelector("video");
@@ -37,14 +38,20 @@ function setup(root: HTMLElement) {
     return mobile ? sources.mobile : sources.desktop;
   };
 
+  // Inline muted playback needs the properties, not only the attributes, on some browsers.
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+
   const load = () => {
     if (loaded) return;
     loaded = true;
     const chosen = pick();
-    for (const [type, src] of [
-      ["video/webm", chosen.webm],
-      ["video/mp4", chosen.mp4],
-    ] as const) {
+    const webm = ["video/webm", chosen.webm] as const;
+    const mp4 = ["video/mp4", chosen.mp4] as const;
+    // Apple devices decode H.264 in hardware; their WebM support is newer and less reliable.
+    const order = APPLE ? [mp4, webm] : [webm, mp4];
+    for (const [type, src] of order) {
       if (!src) continue;
       const source = document.createElement("source");
       source.type = type;

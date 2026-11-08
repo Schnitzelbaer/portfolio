@@ -149,6 +149,18 @@ const sizes = Astro.props.sizes ?? "(min-width: 688px) 640px, calc(100vw - 48px)
       aspect-ratio: var(--aspect-mobile, var(--aspect));
     }
   }
+  /*
+   * The video itself is never hidden: iOS Safari does not autoplay a video it considers
+   * invisible (e.g. opacity 0). The poster lies on top instead and fades out once frames play.
+   */
+  .video-demo__poster {
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity var(--duration) var(--ease-out);
+  }
+  .video-demo[data-started="true"] .video-demo__poster {
+    opacity: 0;
+  }
   .video-demo__poster,
   .video-demo__poster img,
   .video-demo__video {
@@ -157,12 +169,5 @@ const sizes = Astro.props.sizes ?? "(min-width: 688px) 640px, calc(100vw - 48px)
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .video-demo__video {
-    opacity: 0;
-    transition: opacity var(--duration) var(--ease-out);
-  }
-  .video-demo[data-started="true"] .video-demo__video {
-    opacity: 1;
   }
 </style>

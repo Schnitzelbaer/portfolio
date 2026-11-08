@@ -107,13 +107,18 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+  /* The poster image lies on top and fades out once the video plays (see Video.astro). */
+  .card--video .card__media :global(img) {
+    position: relative;
+    z-index: 1;
     transition:
       opacity var(--duration) var(--ease-out),
       transform var(--duration-slow) var(--ease-out);
   }
-  .card[data-started="true"] .card__video {
-    opacity: 1;
+  .card--video[data-started="true"] .card__media :global(img) {
+    opacity: 0;
   }
   .card__link:hover .card__video {
     transform: scale(1.025);
@@ -137,6 +142,7 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
   }
   .card__badge {
     position: absolute;
+    z-index: 2;
     top: 0.75rem;
     left: 0.75rem;
     display: inline-flex;

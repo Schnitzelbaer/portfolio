@@ -16,6 +16,8 @@ test("autoplays muted, looping and inline when visible, without native controls"
   await page.goto(PAGE);
   const root = demo(page);
   expect(await videoSources(page)).toEqual([]);
+  // iOS Safari does not autoplay a video it considers invisible: never hide the element itself.
+  await expect(root.locator("video")).toHaveCSS("opacity", "1");
 
   await root.scrollIntoViewIfNeeded();
   await expect(root).toHaveAttribute("data-playing", "true", { timeout: 10_000 });
@@ -107,4 +109,12 @@ test.describe("with reduced motion", () => {
     await button.click();
     await expect(root).toHaveAttribute("data-playing", "true", { timeout: 10_000 });
   });
+});
+
+test("the project card plays its cover video under a fading poster", async ({ page }) => {
+  await page.goto("/");
+  const card = page.locator(".card--video").first();
+  await expect(card.locator("video")).toHaveCSS("opacity", "1");
+  await expect(card).toHaveAttribute("data-started", "true", { timeout: 10_000 });
+  await expect(card.locator(".card__media img")).toHaveCSS("opacity", "0");
 });

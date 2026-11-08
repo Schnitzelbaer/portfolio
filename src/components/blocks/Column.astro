@@ -22,4 +22,27 @@ const { title } = Astro.props;
   .col__body > :global(* + *) {
     margin-top: 0.75rem;
   }
+  :global(.columns[data-variant="cards"]) .col {
+    padding: 1.5rem;
+    border-top: 0;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  :global(.columns[data-variant="cards"]) .col__title {
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+  :global(.columns[data-variant="cards"]) .col__body {
+    margin-top: 1.25rem;
+    font-size: var(--text-md);
+  }
+  /* Breakout rows hold media (placeholders, figures) with a caption below. */
+  :global(.columns.is-breakout) .col {
+    padding-top: 0;
+    border-top: 0;
+  }
 </style>

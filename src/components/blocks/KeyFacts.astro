@@ -1,5 +1,10 @@
 ---
-/** Key facts from the case study frontmatter, as dotted leader rows. Period and tools are optional. */
+import type { ImageMetadata } from "astro";
+
+/**
+ * Key facts from the case study frontmatter, as dotted leader rows, client first.
+ * Period, tools and a small client logo (shown before the client name) are optional.
+ */
 interface Props {
   role: string;
   client: string;
@@ -7,11 +12,12 @@ interface Props {
   status: string;
   period?: string | undefined;
   tools?: string | undefined;
+  clientLogo?: ImageMetadata | undefined;
 }
-const { role, client, team, status, period, tools } = Astro.props;
+const { role, client, team, status, period, tools, clientLogo } = Astro.props;
 const rows: Array<[string, string | undefined]> = [
-  ["Role", role],
   ["Client", client],
+  ["Role", role],
   ["Team", team],
   ["Period", period],
   ["Status", status],
@@ -26,13 +32,23 @@ const facts = rows.filter((row): row is [string, string] => Boolean(row[1]));
       <div class="key-facts__row">
         <dt class="mono">{term}</dt>
         <span class="key-facts__line" aria-hidden="true" />
-        <dd>{value}</dd>
+        <dd>
+          {term === "Client" && clientLogo && (
+            <img class="key-facts__logo" src={clientLogo.src} width={clientLogo.width} height={clientLogo.height} alt="" />
+          )}
+          {value}
+        </dd>
       </div>
     ))
   }
 </dl>
 
 <style>
+  .key-facts__logo {
+    display: inline-block;
+    margin-right: 0.375rem;
+    vertical-align: -0.0625rem;
+  }
   .key-facts {
     display: grid;
     gap: 0.625rem;

@@ -122,7 +122,15 @@ const serializers: Record<BlockName, Serializer> = {
     ];
   },
   Reflection: (node, children) => [
-    { type: "heading", depth: 2, children: [text(attr(node, "title") ?? "Reflection")] },
+    ...(attr(node, "title") === ""
+      ? []
+      : [
+          {
+            type: "heading",
+            depth: 2,
+            children: [text(attr(node, "title") ?? "Reflection")],
+          } as RootContent,
+        ]),
     ...children,
   ],
   Toggle: (node, children) => [paragraph(strong(attr(node, "summary") ?? "")), ...children],
@@ -252,8 +260,8 @@ export function caseStudyMarkdown(
   options: { url: string; ctx: MarkdownContext },
 ): string {
   const facts = [
-    `- Role: ${meta.keyFacts.role}`,
     `- Client: ${meta.keyFacts.client}`,
+    `- Role: ${meta.keyFacts.role}`,
     `- Team: ${meta.keyFacts.team}`,
     meta.keyFacts.period && `- Period: ${meta.keyFacts.period}`,
     `- Status: ${meta.keyFacts.status}`,

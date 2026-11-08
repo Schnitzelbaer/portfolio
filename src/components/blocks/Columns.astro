@@ -1,13 +1,32 @@
 ---
-/** Side-by-side layout for `<Column>` children; stacks on small screens. */
+/**
+ * Side-by-side layout for `<Column>` children; stacks on small screens.
+ * `variant="cards"` puts each column on a filled card (e.g. "My contribution" / "The team's
+ * contribution"). `size="breakout"` lets the row grow past the text column up to 1300px.
+ */
+interface Props {
+  variant?: "default" | "cards";
+  size?: "wide" | "breakout";
+}
+const { variant = "default", size = "wide" } = Astro.props;
 ---
 
-<div class="block columns is-wide"><slot /></div>
+<div class:list={["block columns", size === "breakout" ? "is-breakout" : "is-wide"]} data-variant={variant}>
+  <slot />
+</div>
 
 <style>
   .columns {
     display: grid;
     gap: 1.5rem 2rem;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .columns[data-variant="cards"] {
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .columns.is-breakout {
+    gap: 2rem 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   }
 </style>

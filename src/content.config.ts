@@ -32,6 +32,8 @@ const work = defineCollection({
           period: z.string().optional(),
           /** Optional: tools and technologies. */
           tools: z.string().optional(),
+          /** Optional: small logo before the client name, e.g. ./client-logo.svg. */
+          clientLogo: image().optional(),
         },
         required("keyFacts", " (role, client, team, status)"),
       ),

@@ -1,15 +1,18 @@
 ---
 import SectionLabel from "../SectionLabel.astro";
 
-/** Closing list of learnings. Write a Markdown list inside; items render numbered. */
+/**
+ * Closing list of learnings. Write a Markdown list inside; items render numbered.
+ * `title=""` drops the label, for when a "Reflection" heading already introduces it.
+ */
 interface Props {
   title?: string;
 }
 const { title = "Reflection" } = Astro.props;
 ---
 
-<section class="block reflection" aria-label={title}>
-  <SectionLabel as="h2">{title}</SectionLabel>
+<section class:list={["block reflection", { "is-unlabeled": !title }]} aria-label={title || "Reflection"}>
+  {title && <SectionLabel as="h2">{title}</SectionLabel>}
   <div class="reflection__body"><slot /></div>
 </section>
 
@@ -20,6 +23,13 @@ const { title = "Reflection" } = Astro.props;
   }
   .reflection__body {
     margin-top: 1rem;
+  }
+  .reflection.is-unlabeled {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .reflection.is-unlabeled .reflection__body {
+    margin-top: 0;
   }
   .reflection__body :global(ul),
   .reflection__body :global(ol) {

@@ -23,6 +23,11 @@
 .prose > .is-full {
   grid-column: full;
 }
+.prose > .is-breakout {
+  grid-column: full;
+  justify-self: center;
+  width: min(100%, 81.25rem);
+}
 .prose > * + * {
   margin-top: 1.5rem;
 }

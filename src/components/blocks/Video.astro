@@ -58,7 +58,7 @@ interface PosterSource {
 
 async function posterSource(image?: ImageMetadata, privateId?: string): Promise<PosterSource | undefined> {
   if (image) {
-    const widths = [480, 800, 1200, 1600].filter((w) => w <= image.width);
+    const widths = [480, 800, 1200, 1600, 2400].filter((w) => w <= image.width);
     const result = await getImage({ src: image, format: "webp", widths: widths.length ? widths : [image.width] });
     return { src: result.src, srcset: result.srcSet.attribute, width: image.width, height: image.height };
   }

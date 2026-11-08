@@ -39,7 +39,7 @@ const year = data.date.getFullYear();
     <div class="case__facts reveal" style="--i: 3"><KeyFacts {...data.keyFacts} /></div>
   </header>
 
-  <div class="case__cover wide reveal" style="--i: 4">
+  <div class:list={["case__cover wide reveal", { "has-video": video }]} style="--i: 4">
     {
       video ? (
         <Video
@@ -47,7 +47,7 @@ const year = data.date.getFullYear();
           webm={video.page.webm}
           poster={data.cover}
           alt={data.coverAlt}
-          sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
+          sizes="(min-width: 1348px) 1300px, calc(100vw - 48px)"
           eager
         />
       ) : (
@@ -118,6 +118,10 @@ const year = data.date.getFullYear();
   .case__cover {
     --col-wide: 48rem;
     margin-top: 3rem;
+  }
+  /* A cover video (animation) gets the breakout width, like wide rows in the body. */
+  .case__cover.has-video {
+    --col-wide: 81.25rem;
   }
   .case__body {
     margin-top: 1.5rem;

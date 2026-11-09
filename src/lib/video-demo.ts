@@ -19,13 +19,14 @@ const APPLE = /Apple/.test(navigator.vendor);
 
 function setup(root: HTMLElement) {
   const video = root.querySelector("video");
+  // Optional: project cards play without a button.
   const button = root.querySelector<HTMLButtonElement>("[data-video-toggle]");
-  if (!video || !button) return;
+  if (!video) return;
   const sources = JSON.parse(root.dataset.sources ?? "{}") as Sources;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const labels = {
-    pause: button.dataset.labelPause ?? "Pause video",
-    play: button.dataset.labelPlay ?? "Play video",
+    pause: button?.dataset.labelPause ?? "Pause video",
+    play: button?.dataset.labelPlay ?? "Play video",
   };
 
   let loaded = false;
@@ -64,8 +65,8 @@ function setup(root: HTMLElement) {
   const render = () => {
     const playing = !video.paused && !video.ended;
     root.dataset.playing = String(playing);
-    button.setAttribute("aria-label", playing ? labels.pause : labels.play);
-    button.dataset.mode = playing ? "pause" : "play";
+    button?.setAttribute("aria-label", playing ? labels.pause : labels.play);
+    if (button) button.dataset.mode = playing ? "pause" : "play";
     // Keep the button visible whenever the video does not play on its own.
     root.toggleAttribute(
       "data-idle",
@@ -101,7 +102,7 @@ function setup(root: HTMLElement) {
     }, HIDE_AFTER_MS);
   };
 
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     if (video.paused || video.ended) {
       userPaused = false;
       play();
@@ -114,7 +115,7 @@ function setup(root: HTMLElement) {
 
   // Touch: a tap on the video reveals the button; only a tap on the button toggles playback.
   root.addEventListener("pointerup", (event) => {
-    if (event.pointerType === "mouse" || button.contains(event.target as Node)) return;
+    if (!button || event.pointerType === "mouse" || button.contains(event.target as Node)) return;
     showControls();
   });
 

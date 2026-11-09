@@ -117,4 +117,5 @@ test("the project card plays its cover video under a fading poster", async ({ pa
   await expect(card.locator("video")).toHaveCSS("opacity", "1");
   await expect(card).toHaveAttribute("data-started", "true", { timeout: 10_000 });
   await expect(card.locator(".card__media img")).toHaveCSS("opacity", "0");
+  await expect(card.locator("[data-video-toggle]")).toHaveCount(0);
 });

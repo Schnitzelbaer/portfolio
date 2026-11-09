@@ -3,7 +3,6 @@ import { Image } from "astro:assets";
 import { coverVideo } from "../lib/cover-video";
 import type { WorkEntry } from "../lib/work";
 import Icon from "./Icon.astro";
-import VideoToggle from "./VideoToggle.astro";
 
 interface Props {
   entry: WorkEntry;
@@ -13,7 +12,8 @@ interface Props {
 }
 const { entry, index, eager = false } = Astro.props;
 const { title, cover, coverAlt, keyFacts, outcome, locked } = entry.data;
-// A card with a cover video plays its small encode in place of the image (poster).
+// A card with a cover video plays its small encode in place of the image (poster), without
+// a play/pause button. With reduced motion it stays on the poster.
 const video = coverVideo(entry.id)?.card;
 const sources = video && JSON.stringify({ desktop: video, mobile: {} });
 ---
@@ -67,7 +67,6 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
       <p class="card__outcome">{outcome}</p>
     </div>
   </a>
-  {video && <VideoToggle />}
 </li>
 
 <script>
@@ -77,15 +76,6 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
 </script>
 
 <style>
-  .card--video {
-    position: relative;
-    container-type: inline-size;
-  }
-  /* The play/pause button sits on the media, outside the link (no nested controls). */
-  .card--video :global(.video-toggle) {
-    top: calc(100cqw * 9 / 16 - 3.5rem);
-    bottom: auto;
-  }
   .card__link {
     display: block;
     border-radius: var(--radius-lg);

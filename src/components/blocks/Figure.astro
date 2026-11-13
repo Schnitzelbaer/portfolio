@@ -12,14 +12,20 @@ interface Props {
   privateId?: string;
   alt: string;
   caption?: string;
-  size?: "content" | "wide" | "full";
+  /** `breakout`: up to 1300px, as wide as a cover video. */
+  size?: "content" | "wide" | "breakout" | "full";
 }
 const { src, privateId, alt, caption, size = "content" } = Astro.props;
-const sizes = size === "full" ? "100vw" : "(min-width: 688px) 640px, calc(100vw - 48px)";
-const widths = [480, 640, 960, 1280, 1920].filter((w) => !src || w <= src.width);
+const sizes =
+  size === "full"
+    ? "100vw"
+    : size === "breakout"
+      ? "(min-width: 1348px) 1300px, calc(100vw - 48px)"
+      : "(min-width: 688px) 640px, calc(100vw - 48px)";
+const widths = [480, 640, 960, 1280, 1920, 2600].filter((w) => !src || w <= src.width);
 ---
 
-<figure class:list={["block", "figure", { "is-wide": size === "wide", "is-full": size === "full" }]}>
+<figure class:list={["block", "figure", { "is-wide": size === "wide", "is-breakout": size === "breakout", "is-full": size === "full" }]}>
   <div class="media">
     {
       src ? (

@@ -121,7 +121,7 @@
 /* Rounded media inside the case study. */
 .media {
   overflow: hidden;
-  border-radius: var(--radius);
+  border-radius: var(--radius-media);
   background: var(--surface);
   box-shadow: 0 0 0 1px var(--border);
 }

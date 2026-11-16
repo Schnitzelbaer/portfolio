@@ -29,8 +29,8 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
       <Image
         src={cover}
         alt={coverAlt}
-        widths={[480, 720, 992, 1280]}
-        sizes="(min-width: 560px) 496px, calc(100vw - 48px)"
+        widths={[480, 768, 1152, 1536]}
+        sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
         loading={eager ? "eager" : "lazy"}
         fetchpriority={index === 0 ? "high" : "auto"}
       />

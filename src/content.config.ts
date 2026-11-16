@@ -19,6 +19,8 @@ const work = defineCollection({
       author: z.string(required("author")).min(1),
       cover: image(),
       coverAlt: z.string(required("coverAlt", " (describe the cover for screen readers)")),
+      /** Caption under a cover video (cover.mp4); every video needs one. */
+      coverCaption: z.string().min(1).optional(),
       locked: z.boolean().default(false),
       outcome: z.string(required("outcome", " (one sentence for the project card)")).min(1),
       order: z.number(required("order", " (sort position on Work, lowest first)")).int(),

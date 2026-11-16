@@ -36,7 +36,7 @@ Git: work directly on `main`, no feature branches. Commit and push small, self-c
 - `src/components/blocks/`: MDX blocks. Every block is registered in `registry.ts`.
 - `src/lib/content/`: remark plugins (placeholders, block images) and draft scanning.
 - `src/lib/notion/`: Notion export → MDX conversion. `scripts/`: CLIs (thin wrappers around `src/lib`).
-- Demos are pre-produced videos next to the case study (`content/work/<slug>/videos/`), embedded with the `<Video>` block (`src/components/blocks/Video.astro`, behaviour in `src/lib/video-demo.ts`). Provide WebM + MP4 and a poster, optionally a mobile variant.
+- Demos are pre-produced videos next to the case study (`content/work/<slug>/videos/`), embedded with the `<Video>` block (`src/components/blocks/Video.astro`, behaviour in `src/lib/video-demo.ts`). Provide WebM + MP4, a poster and a caption (every video has a visible description), optionally a mobile variant.
 - `src/lib/routing/`: routing table for subdomains and content negotiation (Vercel, dev, preview).
 - `src/lib/auth/`: password hash and signed unlock cookie. `src/pages/protected/`: gated assets.
 - `private/` (generated, gitignored): locked images and videos, only in the server function.

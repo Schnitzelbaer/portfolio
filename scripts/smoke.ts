@@ -43,13 +43,13 @@ await check("home page renders with Markdown alternate", async () => {
     : `status ${res.status}`;
 });
 await check("Accept: text/markdown returns Markdown", async () => {
-  const { res, body } = await fetchText(`${base}/about`, { headers: { accept: "text/markdown" } });
+  const { res, body } = await fetchText(`${base}/`, { headers: { accept: "text/markdown" } });
   return (res.headers.get("content-type") ?? "").includes("text/markdown") && body.startsWith("# ")
     ? true
     : `content-type ${res.headers.get("content-type")}`;
 });
 await check("AI crawler user agent gets Markdown", async () => {
-  const { res } = await fetchText(`${base}/about`, {
+  const { res } = await fetchText(`${base}/`, {
     headers: { "user-agent": "Mozilla/5.0 (compatible; GPTBot/1.2)" },
   });
   return (res.headers.get("content-type") ?? "").includes("text/markdown")

@@ -10,6 +10,7 @@ const siteSchema = z.object({
   email: z.email(),
   links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
   work: z.object({ label: z.string(), intro: z.string().min(1) }),
+  pages: z.object({ about: z.boolean().default(true) }).default({ about: true }),
   analytics: z.boolean().default(false),
   agents: z.object({ userAgents: z.array(z.string()).default([]) }).default({ userAgents: [] }),
 });

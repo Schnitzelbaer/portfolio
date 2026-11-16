@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { ABOUT, get } from "./helpers";
 
 test("reflection items with a bold lead-in flow as one paragraph", async ({ page }) => {
   await page.goto("/work/swissgeol-assets");
@@ -16,7 +17,7 @@ test("the navigation stays at the top while scrolling", async ({ page }) => {
   await page.goto("/work/ledger-onboarding");
   await page.mouse.wheel(0, 2000);
   await expect
-    .poll(async () => (await page.locator(".nav__tabs").boundingBox())?.y)
+    .poll(async () => (await page.locator("[data-nav-back]").boundingBox())?.y)
     .toBeLessThan(30);
 });
 
@@ -49,9 +50,31 @@ test.describe("on a phone", () => {
     await page.goto("/work/ledger-onboarding");
     await page.evaluate(() => window.scrollTo(0, 2000));
     await expect
-      .poll(async () => (await page.locator(".nav__tabs").boundingBox())?.y)
+      .poll(async () => (await page.locator("[data-nav-back]").boundingBox())?.y)
       .toBeLessThan(30);
     await expect(page.locator(".edge-blur").first()).toBeHidden();
-    await expect(page.getByRole("link", { name: "About" })).toBeVisible();
+  });
+});
+
+test.describe("with the About page switched off", () => {
+  test.skip(ABOUT, "pages.about is on in content/site.yaml");
+
+  test("there is no About page, no menu and no About link", async ({ page }) => {
+    expect((await get("/about")).status).toBe(404);
+    expect((await get("/about.md")).status).toBe(404);
+    expect((await get("/sitemap.xml")).body).not.toContain("/about");
+    expect((await get("/llms.txt")).body).not.toContain("/about");
+    await page.goto("/");
+    await expect(page.locator(".nav__tabs")).toHaveCount(0);
+    await expect(page.locator('a[href="/about"]')).toHaveCount(0);
+  });
+
+  test("case studies have a labelled Back button at the top left", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/work/swissgeol-assets");
+    const back = page.getByRole("link", { name: "Back to work" });
+    await expect(back).toHaveText("Back");
+    const box = await back.boundingBox();
+    expect(box?.x).toBeLessThan(40);
   });
 });

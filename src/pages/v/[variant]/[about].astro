@@ -3,10 +3,16 @@ import { getEntry } from "astro:content";
 import AboutPage from "../../../components/AboutPage.astro";
 import Base from "../../../layouts/Base.astro";
 import { pageContext } from "../../../lib/page";
+import { site } from "../../../lib/site";
 import { getVariants } from "../../../lib/variants";
 
+/** The variant's /about, built only while `pages.about` is on in content/site.yaml. */
 export async function getStaticPaths() {
-  return (await getVariants()).map((variant) => ({ params: { variant: variant.id }, props: { variant } }));
+  if (!site.pages.about) return [];
+  return (await getVariants()).map((variant) => ({
+    params: { variant: variant.id, about: "about" },
+    props: { variant },
+  }));
 }
 
 const { variant } = Astro.props;

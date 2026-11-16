@@ -3,6 +3,12 @@ import { getEntry } from "astro:content";
 import AboutPage from "../components/AboutPage.astro";
 import Base from "../layouts/Base.astro";
 import { pageContext } from "../lib/page";
+import { site } from "../lib/site";
+
+/** /about, built only while `pages.about` is on in content/site.yaml. */
+export function getStaticPaths() {
+  return site.pages.about ? [{ params: { about: "about" } }] : [];
+}
 
 const about = await getEntry("pages", "about");
 const context = pageContext();

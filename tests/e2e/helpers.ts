@@ -4,6 +4,13 @@ import { request as httpRequest } from "node:http";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 
+/** Whether the About page is switched on in content/site.yaml (`pages.about`). */
+export const ABOUT: boolean =
+  (parseYaml(readFileSync("content/site.yaml", "utf8")) as { pages?: { about?: boolean } }).pages
+    ?.about !== false;
+/** Public pages that exist with the current switches. */
+export const PUBLIC_PAGES = ABOUT ? ["/", "/about"] : ["/"];
+
 export const PORT = 4400;
 export const DOMAIN = "portfolio.localhost";
 export const MAIN = `${DOMAIN}:${PORT}`;

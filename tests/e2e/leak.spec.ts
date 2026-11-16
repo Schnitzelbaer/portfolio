@@ -11,6 +11,7 @@ import {
   lockedSlugs,
   MAIN,
   PASSWORD_HASH,
+  PUBLIC_PAGES,
   privateMediaHashes,
   staticFiles,
   unlockCookie,
@@ -87,7 +88,7 @@ for (const variant of variants()) {
 }
 
 test("public entry points leak nothing", async () => {
-  for (const path of ["/", "/about", "/llms.txt", "/index.md", "/sitemap.xml", "/robots.txt"]) {
+  for (const path of [...PUBLIC_PAGES, "/llms.txt", "/index.md", "/sitemap.xml", "/robots.txt"]) {
     const res = await get(path);
     expect(leaks(res.body, secrets), path).toEqual([]);
   }

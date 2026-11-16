@@ -1,9 +1,12 @@
 ---
+import { site } from "../lib/site";
 import Icon, { type IconName } from "./Icon.astro";
 
 /**
  * Pill tabs in a frosted bar, sticky at the top. Project pages add a round back button left of the tabs, outside
  * the centred group so the tabs stay in place.
+ * With `pages.about: false` (content/site.yaml) Work is the only page: no tabs, and project pages show a
+ * labelled "Back" button at the top left instead. Switching About back on restores the tabs.
  */
 interface Props {
   current: "work" | "about" | undefined;
@@ -11,12 +14,24 @@ interface Props {
   back?: string | undefined;
 }
 const { current, back } = Astro.props;
+const tabs = site.pages.about;
 const items: Array<{ id: "work" | "about"; label: string; href: string; icon: IconName }> = [
   { id: "work", label: "Work", href: "/", icon: "work" },
   { id: "about", label: "About", href: "/about", icon: "about" },
 ];
 ---
 
+{
+  !tabs && back && (
+    <nav class="nav nav--back-only" aria-label="Main">
+      <a class="nav__back nav__back--labelled" href={back} data-nav-back aria-label="Back to work">
+        <Icon name="back" size={16} />
+        <span>Back</span>
+      </a>
+    </nav>
+  )
+}
+{tabs && (
 <nav class="nav" aria-label="Main">
   <div class="nav__bar">
     {
@@ -46,6 +61,7 @@ const items: Array<{ id: "work" | "about"; label: string; href: string; icon: Ic
     </ul>
   </div>
 </nav>
+)}
 
 <script is:inline>
   // Coming from the list, go back in history so the list keeps its scroll position.
@@ -105,6 +121,29 @@ const items: Array<{ id: "work" | "about"; label: string; href: string; icon: Ic
   }
   .nav__back:hover {
     color: var(--text);
+  }
+  /* Only page left is Work: the back button sits alone at the top left, with a label. */
+  .nav--back-only {
+    justify-content: flex-start;
+    padding-inline: 1.5rem;
+  }
+  .nav--back-only .nav__back--labelled {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    padding: 0 1rem 0 0.875rem;
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    pointer-events: auto;
+  }
+  @media (max-width: 40rem) {
+    .nav--back-only {
+      padding-inline: var(--gutter);
+    }
   }
   .nav__link {
     position: relative;

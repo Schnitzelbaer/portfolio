@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { site as config } from "../lib/site";
 import { getWork } from "../lib/work";
 
 /** Main domain only. Application variants and locked case studies are never listed. */
@@ -6,7 +7,7 @@ export const GET: APIRoute = async ({ site }) => {
   const work = (await getWork()).filter((entry) => !entry.data.locked);
   const urls = [
     { path: "/", lastmod: undefined },
-    { path: "/about", lastmod: undefined },
+    ...(config.pages.about ? [{ path: "/about", lastmod: undefined }] : []),
     ...work.map((entry) => ({
       path: `/work/${entry.id}`,
       lastmod: entry.data.date.toISOString().slice(0, 10),

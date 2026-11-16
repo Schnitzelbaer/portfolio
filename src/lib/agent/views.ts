@@ -1,5 +1,6 @@
 import type { PageContext } from "../page";
 import { workFor } from "../page";
+import { site } from "../site";
 import type { Variant } from "../variants";
 import { aboutDocument, caseStudyDocument, workDocument } from "./pages";
 
@@ -19,10 +20,14 @@ export async function agentViewPaths(
       params: { path: undefined },
       props: { title: "Work", markdown: workDocument(work, context), path: "/" },
     },
-    {
-      params: { path: "about" },
-      props: { title: "About", markdown: await aboutDocument(context), path: "/about" },
-    },
+    ...(site.pages.about
+      ? [
+          {
+            params: { path: "about" },
+            props: { title: "About", markdown: await aboutDocument(context), path: "/about" },
+          },
+        ]
+      : []),
     ...work.map((entry) => ({
       params: { path: `work/${entry.id}` },
       props: {

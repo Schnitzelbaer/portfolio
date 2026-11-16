@@ -7,6 +7,10 @@ email: hello@example.com
 links:
   - label: LinkedIn
     href: https://www.linkedin.com/
+# Pages that can be switched off. With about: false there is no About page, no menu (Work is
+# the only page then; case studies get a Back button instead), and no About links anywhere.
+pages:
+  about: false
 work:
   label: Selected work
   intro: >-

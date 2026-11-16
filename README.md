@@ -39,6 +39,7 @@ Variants run locally at `http://<id>.portfolio.localhost:4321` (no setup needed;
          alt="What the video shows" caption="Optional caption" />
   ```
   `src`, `poster`, `alt` and `caption` are required: every video gets a short visible description (a unit test checks this). A `cover.mp4` next to the case study replaces the cover image and needs `coverCaption` in the frontmatter. Videos play muted and looped while visible, with one play/pause button. Small screens load the mobile file if there is one. Export a poster from the first frame, for example `ffmpeg -i flow.mp4 -frames:v 1 flow.jpg`.
+- **About page:** switched off for now (`pages.about: false` in `content/site.yaml`). Set it to `true` to bring back the page, the Work/About menu and all About links; the content stays in `content/pages/about.mdx`.
 - **Password protection:** one password for all locked work, checked on the server. Locked text, images and videos are never part of the public build. Set it with `npm run password:hash`.
 - **Agent version:** every page as Markdown (`.md` URLs, `Accept: text/markdown`, known AI crawlers), `llms.txt`, and the "For agents" switch. Locked content stays locked there too.
 - **Tests:** `npm test` (unit), `npm run test:e2e` (production build: leak tests, unlock flow, variants, agents, videos, axe).

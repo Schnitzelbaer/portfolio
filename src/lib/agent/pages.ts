@@ -32,7 +32,7 @@ export function workDocument(entries: WorkEntry[], context: PageContext): string
         `- [${e.data.title}](${mdUrl(context, `/work/${e.id}`)})${e.data.locked ? " (password protected)" : ""}: ${e.data.outcome} Role: ${e.data.keyFacts.role}.`,
     )
     .join("\n");
-  return `# ${site.name}, ${site.role}\n\n${greeting}> ${site.work.intro}\n\n## Case studies\n\n${list}\n\n## More\n\n- [About ${site.name}](${mdUrl(context, "/about")})\n- [Index for agents](${context.origin}/llms.txt)\n`;
+  return `# ${site.name}, ${site.role}\n\n${greeting}> ${site.work.intro}\n\n## Case studies\n\n${list}\n\n## More\n\n${site.pages.about ? `- [About ${site.name}](${mdUrl(context, "/about")})\n` : ""}- [Index for agents](${context.origin}/llms.txt)\n`;
 }
 
 export async function aboutDocument(context: PageContext): Promise<string> {
@@ -69,7 +69,7 @@ export function llmsTxt(entries: WorkEntry[], context: PageContext): string {
     )
     .join("\n");
   const greeting = context.variant ? `\n\nPrepared for ${context.variant.company}.` : "";
-  return `# ${site.name}\n\n> ${site.work.intro}${greeting}\n\nEvery page is available as Markdown: append \`.md\` to the URL or send \`Accept: text/markdown\`.\n\n## Pages\n\n- [Work](${mdUrl(context, "/")}): Overview of selected case studies.\n- [About](${mdUrl(context, "/about")}): Background, experience and contact.\n\n## Case studies\n\n${work}\n`;
+  return `# ${site.name}\n\n> ${site.work.intro}${greeting}\n\nEvery page is available as Markdown: append \`.md\` to the URL or send \`Accept: text/markdown\`.\n\n## Pages\n\n- [Work](${mdUrl(context, "/")}): Overview of selected case studies.\n${site.pages.about ? `- [About](${mdUrl(context, "/about")}): Background, experience and contact.\n` : ""}\n## Case studies\n\n${work}\n`;
 }
 
 /** True when the request asks for Markdown (Accept header or a known AI agent). */

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { allSlugs, get, PORT, variantHost, variants } from "./helpers";
+import { allSlugs, get, PORT, PUBLIC_PAGES, variantHost, variants } from "./helpers";
 
 const variant = variants()[0];
 
@@ -38,7 +38,7 @@ test.describe("application variants", () => {
   });
 
   test("is never linked from the main site, and /v/ is not reachable there", async ({ page }) => {
-    for (const path of ["/", "/about", "/work/ledger-onboarding"]) {
+    for (const path of [...PUBLIC_PAGES, "/work/ledger-onboarding"]) {
       await page.goto(`http://portfolio.localhost:${PORT}${path}`);
       const links = await page
         .locator("a[href]")

@@ -1,14 +1,14 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { ABOUT, PUBLIC_PAGES } from "./helpers";
 
 const pages = [
-  "/",
-  "/about",
+  ...PUBLIC_PAGES,
   "/work/swissgeol-assets",
   "/work/fdfa-design-system",
   "/work/ledger-onboarding",
   "/work/care-scheduling",
-  "/agent/about",
+  ...(ABOUT ? ["/agent/about"] : ["/agent"]),
 ];
 
 for (const theme of ["dark", "light"] as const) {

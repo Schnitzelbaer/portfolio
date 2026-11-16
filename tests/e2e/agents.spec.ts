@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { get, lockedSlugs, unlockCookie, variantHost, variants } from "./helpers";
+import { get, lockedSlugs, PUBLIC_PAGES, unlockCookie, variantHost, variants } from "./helpers";
 
 const { locked } = lockedSlugs();
 
 test("pages answer Accept: text/markdown with Markdown", async () => {
-  for (const path of ["/", "/about", "/work/swissgeol-assets", `/work/${locked[0]}`]) {
+  for (const path of [...PUBLIC_PAGES, "/work/swissgeol-assets", `/work/${locked[0]}`]) {
     const res = await get(path, { headers: { accept: "text/markdown" } });
     expect(res.status, path).toBe(200);
     expect(res.headers["content-type"], path).toContain("text/markdown");
@@ -13,11 +13,13 @@ test("pages answer Accept: text/markdown with Markdown", async () => {
 });
 
 test("known AI crawlers get Markdown by default, browsers get HTML", async () => {
-  const bot = await get("/about", {
+  const bot = await get("/work/swissgeol-assets", {
     headers: { "user-agent": "Mozilla/5.0 (compatible; ClaudeBot/1.0)" },
   });
   expect(bot.headers["content-type"]).toContain("text/markdown");
-  const browser = await get("/about", { headers: { "user-agent": "Mozilla/5.0 Chrome/150" } });
+  const browser = await get("/work/swissgeol-assets", {
+    headers: { "user-agent": "Mozilla/5.0 Chrome/150" },
+  });
   expect(browser.headers["content-type"]).toContain("text/html");
   expect(String(browser.headers.vary)).toContain("Accept");
 });

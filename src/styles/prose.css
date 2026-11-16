@@ -50,6 +50,10 @@
 .prose > .block + :not(.block) {
   margin-top: 3rem;
 }
+/* A decision belongs to the media or decision right above it: keep them close. */
+.prose > .block + .decision {
+  margin-top: 1.25rem;
+}
 .prose > :is(h2, h3) + .block {
   margin-top: 1.5rem;
 }

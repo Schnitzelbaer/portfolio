@@ -33,6 +33,8 @@ interface Props {
   sizes?: string;
   /** Load the poster eagerly (video at the top of a page, LCP candidate). */
   eager?: boolean;
+  /** `breakout`: up to 1300px, as wide as a cover video. */
+  size?: "wide" | "breakout";
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   alt,
   caption,
   eager = false,
+  size = "wide",
 } = Astro.props;
 
 interface PosterSource {
@@ -89,10 +92,14 @@ const sources = JSON.stringify({
   mobile: { mp4: mobileSrc, webm: mobileWebm },
 });
 const style = [`--aspect: ${aspect}`, mobileAspect && `--aspect-mobile: ${mobileAspect}`].filter(Boolean).join("; ");
-const sizes = Astro.props.sizes ?? "(min-width: 688px) 640px, calc(100vw - 48px)";
+const sizes =
+  Astro.props.sizes ??
+  (size === "breakout" ? "(min-width: 1348px) 1300px, calc(100vw - 48px)" : "(min-width: 688px) 640px, calc(100vw - 48px)");
 ---
 
-<figure class="block video-demo is-wide" data-video-demo data-sources={sources} style={style}>
+<figure
+  class:list={["block video-demo", size === "breakout" ? "is-breakout" : "is-wide"]}
+  data-video-demo data-sources={sources} style={style}>
   <div class="video-demo__frame">
     {
       desktopPoster && (

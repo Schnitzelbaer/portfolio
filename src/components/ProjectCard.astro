@@ -11,7 +11,7 @@ interface Props {
   eager?: boolean;
 }
 const { entry, index, eager = false } = Astro.props;
-const { title, cover, coverAlt, keyFacts, outcome, locked } = entry.data;
+const { title, cover, coverAlt, outcome, locked } = entry.data;
 // A card with a cover video plays its small encode in place of the image (poster), without
 // a play/pause button. With reduced motion it stays on the poster.
 const video = coverVideo(entry.id)?.card;
@@ -63,7 +63,6 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
         {title}
         {locked && <Icon name="lock" size={15} class="card__lock" label="Password protected" />}
       </h2>
-      <p class="card__role mono">{keyFacts.role}</p>
       <p class="card__outcome">{outcome}</p>
     </div>
   </a>
@@ -145,7 +144,7 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
     backdrop-filter: blur(8px);
   }
   .card__body {
-    padding: 1rem 0.25rem 0;
+    padding: 1.25rem 0.25rem 0;
   }
   .card__title {
     font-size: var(--text-md);
@@ -158,14 +157,11 @@ const sources = video && JSON.stringify({ desktop: video, mobile: {} });
     vertical-align: -0.1em;
     color: var(--text-muted);
   }
-  .card__role {
-    margin-top: 0.375rem;
-  }
   .card__outcome {
-    margin-top: 0.375rem;
+    margin-top: 0.5rem;
     color: var(--text-muted);
     font-size: var(--text-ui);
-    line-height: 1.5;
+    line-height: 1.6;
   }
   .card__link:hover .card__title {
     color: var(--text-strong);

@@ -117,14 +117,20 @@ const year = data.date.getFullYear();
   }
   .case__cover {
     --col-wide: 48rem;
-    margin-top: 3rem;
+    margin-top: 2.5rem;
   }
   /* A cover video (animation) gets the breakout width, like wide rows in the body. */
   .case__cover.has-video {
     --col-wide: 81.25rem;
   }
+  /* The body starts one section gap below the cover (see the rhythm in prose.css). */
   .case__body {
-    margin-top: 1.5rem;
+    margin-top: 6rem;
+  }
+  @media (max-width: 40rem) {
+    .case__body {
+      margin-top: 4.5rem;
+    }
   }
   .case__gate {
     margin-top: 2.5rem;

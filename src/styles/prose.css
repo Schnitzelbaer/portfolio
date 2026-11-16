@@ -28,34 +28,58 @@
   justify-self: center;
   width: min(100% - 2 * var(--gutter), 81.25rem);
 }
-.prose > * + * {
-  margin-top: 1.5rem;
+/*
+ * Vertical rhythm. Every gap comes from one of five relations, so sections read as
+ * sections and related items stay together:
+ *   section  before every heading (between sections)
+ *   heading  heading to its first item
+ *   text     paragraph to paragraph, list, quote
+ *   media    text to block (image, video, cards, callout) and back, block to block
+ *   attached a decision under media or another decision, outcome to outcome
+ */
+.prose {
+  --gap-section: 6rem;
+  --gap-heading: 1.25rem;
+  --gap-text: 1.5rem;
+  --gap-media: 2.5rem;
+  --gap-attached: 1.25rem;
+}
+@media (max-width: 40rem) {
+  .prose {
+    --gap-section: 4.5rem;
+    --gap-media: 2rem;
+  }
 }
 .prose > h2 {
-  margin-top: 4.5rem;
   font-size: var(--text-lg);
   letter-spacing: -0.015em;
 }
 .prose > h3 {
-  margin-top: 3rem;
   font-size: var(--text-md);
 }
-.prose > h2 + *,
-.prose > h3 + * {
-  margin-top: 1rem;
+/* Ordered by specificity; later rules win for the more specific relation. */
+.prose > * {
+  margin-top: 0;
 }
-.prose > .block {
-  margin-top: 3rem;
+.prose > * + * {
+  margin-top: var(--gap-text);
 }
-.prose > .block + :not(.block) {
-  margin-top: 3rem;
+.prose > * + .block,
+.prose > .block + * {
+  margin-top: var(--gap-media);
 }
-/* A decision belongs to the media or decision right above it: keep them close. */
-.prose > .block + .decision {
-  margin-top: 1.25rem;
+.prose > :is(*, .block) + h2 {
+  margin-top: var(--gap-section);
 }
-.prose > :is(h2, h3) + .block {
-  margin-top: 1.5rem;
+.prose > :is(*, .block) + h3 {
+  margin-top: calc(var(--gap-section) / 2);
+}
+.prose > :is(h2, h3) + :is(*, .block) {
+  margin-top: var(--gap-heading);
+}
+.prose > .block + .decision,
+.prose > .outcome + .outcome {
+  margin-top: var(--gap-attached);
 }
 .prose strong {
   color: var(--text);

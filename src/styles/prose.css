@@ -38,16 +38,16 @@
  *   attached a decision under media or another decision, outcome to outcome
  */
 .prose {
-  --gap-section: 6rem;
-  --gap-heading: 1.25rem;
-  --gap-text: 1.5rem;
-  --gap-media: 2.5rem;
+  --gap-section: 7.5rem;
+  --gap-heading: 1.5rem;
+  --gap-text: 1.75rem;
+  --gap-media: 3.5rem;
   --gap-attached: 1.25rem;
 }
 @media (max-width: 40rem) {
   .prose {
-    --gap-section: 4.5rem;
-    --gap-media: 2rem;
+    --gap-section: 5.5rem;
+    --gap-media: 2.5rem;
   }
 }
 .prose > h2 {
